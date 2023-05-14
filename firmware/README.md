@@ -12,3 +12,4 @@ This firmware embeds the frontend and serves it via a captive portal.
 - Implement light timer
 - Implement heating control (pid?)
 - Implement reset to defaults route
+- Implement temp + humidity history with leftover memory
