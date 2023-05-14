@@ -9,6 +9,9 @@ typedef struct
     char captivePortalSSID[32+1]; // 32 chars + null terminator
     char captivePortalPassword[63+1]; // 63 chars + null terminator
     uint8_t captivePortalChannel; // 1-13, wifi channel
+    uint8_t temperatureSetpoint; // 0-255, temperature setpoint in degrees F
+    time_t lightOnTime; // time_t, time of day to turn on light
+    time_t lightOffTime; // time_t, time of day to turn off light
 
     // Put all new settings before this
     uint16_t crc;
@@ -19,8 +22,11 @@ const settings_t default_settings =
 {
     sizeof(settings_t), // structSize
     "SnekSafe", // captivePortalSSID
-    "snekysnek", // captivePortalPassword
+    "", // captivePortalPassword
     6, // captivePortalChannel
+    82, // temperatureSetpoint
+    0, // lightOnTime
+    0, // lightOffTime
     0 // crc
 };
 
