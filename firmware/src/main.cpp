@@ -28,6 +28,10 @@ void setup() {
     request->send(200, "application/json", "{ \"status\": \"ok\" }");
   });
 
+  server.on("/ping", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", String(millis()));
+  });
+
   server.begin();
 }
 
