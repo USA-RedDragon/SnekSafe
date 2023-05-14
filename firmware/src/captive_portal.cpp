@@ -11,7 +11,7 @@
 
 #define MAX_AP_CLIENTS 4
 
-const char* CAPTIVE_PORTAL_LINK = "http://192.9.200.1/";
+const char* CAPTIVE_PORTAL_LINK = "http://192.9.200.1/setup";
 const IPAddress CAPTIVE_PORTAL_IP = IPAddress(192, 9, 200, 1);
 const IPAddress CAPTIVE_PORTAL_GATEWAY = IPAddress(255, 255, 255, 0);
 
@@ -50,7 +50,11 @@ CaptivePortal::CaptivePortal(AsyncWebServer* webServer) {
 
 void CaptivePortal::setup(settings_t* settings) {
     Serial.println("Starting SoftAP");
-    WiFi.mode(WIFI_AP);
+    if (WiFi.getMode() == WIFI_STA) {
+        WiFi.mode(WIFI_AP_STA);
+    } else {
+        WiFi.mode(WIFI_AP);
+    }
     WiFi.softAPConfig(CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_GATEWAY);
     WiFi.softAP(settings->captivePortalSSID, settings->captivePortalPassword, settings->captivePortalChannel, 0, MAX_AP_CLIENTS);
     this->dnsServer->setTTL(300);
