@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
+#include <EEPROM.h>
 
 #include "captive_portal.h"
 #include "frontend.h"
@@ -15,6 +16,8 @@ void setup() {
   Serial.begin(9600);
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
+
+  EEPROM.begin(sizeof(settings_t));
 
   settings_read(&settings);
 

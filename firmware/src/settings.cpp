@@ -5,12 +5,10 @@
 #include "settings.h"
 
 void settings_read(settings_t* dest) {
-    EEPROM.begin(sizeof(settings_t));
-
     settings_t read_settings;
     *dest = default_settings;
 
-    EEPROM.get(0, read_settings);
+    read_settings = EEPROM.get(0, read_settings);
     Serial.printf("EEPROM settings structSize: %d\n", read_settings.structSize);
     Serial.printf("Actual settings structSize: %d\n", sizeof(settings_t));
     Serial.printf("EEPROM settings crc: %04X\n", read_settings.crc);
