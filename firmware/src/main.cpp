@@ -3,6 +3,7 @@
 #include <LittleFS.h>
 
 #include "captive_portal.h"
+#include "frontend.h"
 #include "settings.h"
 
 settings_t settings;
@@ -31,6 +32,8 @@ void setup() {
   server.on("/ping", HTTP_GET, [] (AsyncWebServerRequest *request) {
     request->send(200, "text/plain", String(millis()));
   });
+
+  frontend_setup(&server);
 
   server.begin();
 }

@@ -6,7 +6,6 @@
 #else
 #include <ESP8266WiFi.h>
 #endif
-#include <LittleFS.h>
 
 #include "captive_portal.h"
 
@@ -58,22 +57,6 @@ void CaptivePortal::setup(settings_t* settings) {
     #endif
 
     this->setupKnownEndpoints();
-
-    this->webServer->serveStatic("/", LittleFS, "/");
-    this->webServer->serveStatic("/assets", LittleFS, "/assets").setCacheControl("max-age=600");
-
-    this->webServer->on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        // If the user agent has "CaptiveNetworkSupport" in it, we should redirect to the captive portal
-        if (request->header("User-Agent").indexOf("CaptiveNetworkSupport") >= 0) {
-            request->redirect("http://192.9.200.1/");
-        } else {
-            request->send(LittleFS, "/index.html");
-        }
-    });
-
-    this->webServer->onNotFound([](AsyncWebServerRequest *request){
-        request->send(LittleFS, "/index.html");
-    });
 }
 
 void CaptivePortal::loop() {
