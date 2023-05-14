@@ -1,5 +1,6 @@
 #include <LittleFS.h>
 
+#include "captive_portal.h"
 #include "frontend.h"
 
 void frontend_setup(AsyncWebServer* server) {
@@ -9,7 +10,7 @@ void frontend_setup(AsyncWebServer* server) {
     server->on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
         // If the user agent has "CaptiveNetworkSupport" in it, we should redirect to the captive portal
         if (request->header("User-Agent").indexOf("CaptiveNetworkSupport") >= 0) {
-            request->redirect("http://192.9.200.1/");
+            request->redirect(CAPTIVE_PORTAL_LINK);
         } else {
             request->send(LittleFS, "/index.html");
         }

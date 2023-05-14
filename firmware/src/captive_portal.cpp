@@ -11,6 +11,10 @@
 
 #define MAX_AP_CLIENTS 4
 
+const char* CAPTIVE_PORTAL_LINK = "http://192.9.200.1/";
+const IPAddress CAPTIVE_PORTAL_IP = IPAddress(192, 9, 200, 1);
+const IPAddress CAPTIVE_PORTAL_GATEWAY = IPAddress(255, 255, 255, 0);
+
 uint8_t knownEndpointsSize = 9;
 const char* knownEndpoints[] = {
     "/mobile/status.php",
@@ -47,7 +51,7 @@ CaptivePortal::CaptivePortal(AsyncWebServer* webServer) {
 void CaptivePortal::setup(settings_t* settings) {
     Serial.println("Starting SoftAP");
     WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(IPAddress(192, 9, 200, 1), IPAddress(192, 9, 200, 1), IPAddress(255, 255, 255, 0));
+    WiFi.softAPConfig(CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_GATEWAY);
     WiFi.softAP(settings->captivePortalSSID, settings->captivePortalPassword, settings->captivePortalChannel, 0, MAX_AP_CLIENTS);
     this->dnsServer->setTTL(300);
     this->dnsServer->start(53, "*", WiFi.softAPIP());
@@ -66,8 +70,8 @@ void CaptivePortal::loop() {
 void CaptivePortal::setupKnownEndpoints() {
     for (int i = 0; i < knownEndpointsSize; i++) {
         this->webServer->on(knownEndpoints[i], HTTP_ANY, [] (AsyncWebServerRequest *request) {
-            request->redirect("http://192.9.200.1/");
-            Serial.printf("%s %s sent redirect to http://192.9.200.1/\n", request->host().c_str(), request->url().c_str());
+            request->redirect(CAPTIVE_PORTAL_LINK);
+            Serial.printf("%s %s sent redirect to %s\n", request->host().c_str(), request->url().c_str(), CAPTIVE_PORTAL_LINK);
         });
     }
 }

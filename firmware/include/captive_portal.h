@@ -6,6 +6,10 @@
 #include <ESPAsyncWebServer.h>
 #include "settings.h"
 
+extern const char* CAPTIVE_PORTAL_LINK;
+extern const IPAddress CAPTIVE_PORTAL_IP;
+extern const IPAddress CAPTIVE_PORTAL_GATEWAY;
+
 class CaptivePortal {
 public:
     CaptivePortal(AsyncWebServer* webServer);
