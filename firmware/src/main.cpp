@@ -3,9 +3,17 @@
 #include <LittleFS.h>
 #include <EEPROM.h>
 
+#ifdef ARDUINO_ARCH_ESP32
+#include <WiFi.h>
+#include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
+#else
+#include <ESP8266WiFi.h>
+#endif
+
 #include "captive_portal.h"
 #include "frontend.h"
 #include "settings.h"
+#include "wifi.h"
 
 settings_t settings;
 
@@ -26,6 +34,8 @@ void setup() {
     return;
   }
 
+  WiFi.mode(WIFI_STA);
+
   captivePortal.setup(&settings);
 
   server.on("/data", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -39,10 +49,16 @@ void setup() {
   frontend_setup(&server);
 
   server.begin();
+
+  wifi_connect(&settings);
 }
 
 void loop() {
   captivePortal.loop();
+
+  if (WiFi.status() != WL_CONNECTED) {
+    wifi_connect(&settings);
+  }
 
   delay(1);
 }
