@@ -19,6 +19,7 @@ typedef struct
     time_t lightOffTime; // time_t, time of day to turn off light
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
+    char mdnsName[32+1]; // 32 chars + null terminator
 
     // Put all new settings before this
     uint16_t crc;
@@ -36,6 +37,7 @@ const settings_t default_settings =
     0, // lightOffTime
     "", // wifiSSID
     "", // wifiPassword
+    "snek", // mdnsName
     0 // crc
 };
 

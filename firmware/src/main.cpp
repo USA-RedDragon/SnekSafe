@@ -19,6 +19,7 @@ settings_t settings;
 
 AsyncWebServer server(80);
 CaptivePortal captivePortal(&server);
+bool wifi_changed = false;
 
 void setup() {
   Serial.begin(9600);
@@ -50,14 +51,19 @@ void setup() {
 
   server.begin();
 
-  wifi_connect(&settings);
+  if (wifi_connect(&settings)) {
+    Serial.printf("Wifi connected. IP: %s\n", WiFi.localIP().toString().c_str());
+  } else {
+    Serial.println("Wifi not connected.");
+  }
 }
 
 void loop() {
   captivePortal.loop();
 
-  if (WiFi.status() != WL_CONNECTED) {
+  if (wifi_changed) {
     wifi_connect(&settings);
+    wifi_changed = false;
   }
 
   delay(1);
