@@ -54,7 +54,7 @@ void settings_read(settings_t* dest) {
 void settings_write(settings_t* src) {
     Serial.println("Writing settings to EEPROM");
     src->structSize = sizeof(settings_t);
-    src->crc = crc16((uint8_t*)src, src->structSize);
+    src->crc = crc16((uint8_t*)src, src->structSize-sizeof(uint16_t));
     Serial.printf("CRC: %04X\n", src->crc);
     EEPROM.put(0, *src);
     EEPROM.commit();
@@ -64,7 +64,7 @@ bool settings_check_crc(settings_t* settings) {
     bool ret = false;
     uint16_t read_crc = settings->crc;
     settings->crc = 0;
-    if (crc16((uint8_t*)settings, settings->structSize) == read_crc) {
+    if (crc16((uint8_t*)settings, settings->structSize-sizeof(uint16_t)) == read_crc) {
         ret = true;
     }
     settings->crc = read_crc;
