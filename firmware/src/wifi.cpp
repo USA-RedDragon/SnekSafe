@@ -26,7 +26,7 @@ bool wifi_connect(settings_t* settings) {
         WiFi.setAutoReconnect(true);
         Serial.printf("WiFi Connected. IP=%s\n", WiFi.localIP().toString().c_str());
         timeClient.begin();
-        timeClient.setTimeOffset(settings->timezoneOffset);
+        timeClient.setTimeOffset(settings->timezoneOffset * 60);
         if (!timeClient.update()) {
             timeClient.forceUpdate();
         }
@@ -49,4 +49,8 @@ void wifi_update_time() {
     if (WiFi.status() == WL_CONNECTED) {
         timeClient.update();
     }
+}
+
+void wifi_update_timezone(settings_t* settings) {
+    timeClient.setTimeOffset(settings->timezoneOffset * 60);
 }
