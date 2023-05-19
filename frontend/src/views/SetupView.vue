@@ -161,8 +161,8 @@ export default {
         .catch((error) => {
           console.log(error);
           this.$toast.add({
-            summary: 'Success',
-            severity: 'success',
+            summary: 'Scan Failed',
+            severity: 'error',
             detail: error,
             life: 3000,
           });
