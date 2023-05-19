@@ -30,7 +30,7 @@ void settings_read(settings_t* dest) {
 
         *dest = read_settings;
     } else if (read_settings.structSize < sizeof(settings_t)) {
-        // Settings found of a bigger size
+        // Settings found of a smaller size
         // We have potentially added new fields, so memcpy the old settings into the settings struct
         Serial.println("EEPROM settings found of a bigger size");
         
