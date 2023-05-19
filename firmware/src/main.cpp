@@ -10,6 +10,7 @@
 #include <ESP8266WiFi.h>
 #endif
 
+#include "api.h"
 #include "captive_portal.h"
 #include "frontend.h"
 #include "settings.h"
@@ -39,13 +40,7 @@ void setup() {
 
   captivePortal.setup(&settings);
 
-  server.on("/data", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    request->send(200, "application/json", "{ \"status\": \"ok\" }");
-  });
-
-  server.on("/ping", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", String(millis()));
-  });
+  api_setup(&server, &settings);
 
   frontend_setup(&server);
 
