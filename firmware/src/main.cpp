@@ -31,8 +31,9 @@ void setup() {
 
   settings_read(&settings);
 
-  if(!LittleFS.begin()){
-    Serial.println("An Error has occurred while mounting LittleFS");
+  if (!LittleFS.begin()){
+    Serial.println("Failed to initialize LittleFS");
+    ESP.restart();
     return;
   }
 
