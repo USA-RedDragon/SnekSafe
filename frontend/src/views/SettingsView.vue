@@ -121,6 +121,27 @@
             <br />
           </span>
           <br />
+          <span class="p-float-label">
+            <InputText
+              id="timezoneOffset"
+              type="text"
+              v-model="v$.timezoneOffset.$model"
+              :class="{
+                'p-invalid': v$.timezoneOffset.$invalid && submitted,
+              }"
+            />
+            <label
+              for="timezoneOffset"
+              :class="{ 'p-error': v$.timezoneOffset.$invalid && submitted }"
+              >Timezone</label>
+          </span>
+          <span v-if="v$.timezoneOffset.$error && submitted">
+            <span v-for="(error, index) of v$.timezoneOffset.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
           <!-- lightOnTime -->
           <!-- lightOffTime -->
           <span class="p-float-label">
@@ -283,7 +304,7 @@ import Dropdown from 'primevue/dropdown';
 import API from '@/services/API';
 
 import { useVuelidate } from '@vuelidate/core';
-import { maxLength, minLength, maxValue, minValue } from '@vuelidate/validators';
+import { maxLength, minLength, maxValue, minValue, numeric } from '@vuelidate/validators';
 
 export default {
   components: {
@@ -311,6 +332,7 @@ export default {
       lightOnTime: 0,
       lightOffTime: 0,
       mdnsName: '',
+      timezoneOffset: 0,
 
       wifiSSID: '',
       wifiPassword: '',
@@ -341,6 +363,11 @@ export default {
       mdnsName: {
         minLength: minLength(2),
         maxLength: maxLength(32),
+      },
+      timezoneOffset: {
+        minValue: minValue(-720),
+        maxValue: maxValue(720),
+        numeric,
       },
       wifiSSID: {
         minLength: minLength(2),
