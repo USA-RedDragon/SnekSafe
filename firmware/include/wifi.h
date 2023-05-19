@@ -5,4 +5,6 @@
 
 bool wifi_connect(settings_t* settings);
 
+extern bool wifi_changed;
+
 #endif
