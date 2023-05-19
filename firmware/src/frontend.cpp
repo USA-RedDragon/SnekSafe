@@ -22,6 +22,12 @@ void frontend_setup(AsyncWebServer* server) {
     });
 
     server->onNotFound([](AsyncWebServerRequest *request){
-        request->send(LittleFS, "/index.html");
+        if (request->method() == HTTP_OPTIONS) {
+            request->send(200);
+        } else if (request->url().startsWith("/api")) {
+            request->send(404);
+        } else {
+            request->send(LittleFS, "/index.html");
+        }
     });
 }
