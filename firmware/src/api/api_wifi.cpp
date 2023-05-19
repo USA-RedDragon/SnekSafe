@@ -176,8 +176,6 @@ void api_wifi_setup(AsyncWebServer* server, settings_t* settings) {
             return;
         }
 
-        Serial.printf("ssid=%s, password=%s\n", ssid, password);
-
         for (int i = 0; i < ssid_len; i++) {
             settings->wifiSSID[i] = ssid[i];
         }

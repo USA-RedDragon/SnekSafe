@@ -7,15 +7,12 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         AsyncJsonResponse* response = new AsyncJsonResponse();
         const JsonObject& doc = response->getRoot();
         doc["captivePortalSSID"] = settings->captivePortalSSID;
-        doc["captivePortalPassword"] = settings->captivePortalPassword;
         doc["captivePortalChannel"] = settings->captivePortalChannel;
         doc["temperatureSetpoint"] = settings->temperatureSetpoint;
         doc["lightOnTime"] = settings->lightOnTime;
         doc["lightOffTime"] = settings->lightOffTime;
         doc["wifiSSID"] = settings->wifiSSID;
-        doc["wifiPassword"] = settings->wifiPassword;
         doc["mdnsName"] = settings->mdnsName;
-        doc["otaPassword"] = settings->otaPassword;
         response->setLength();
         request->send(response);
     });
