@@ -13,6 +13,7 @@
 #include "captive_portal.h"
 #include "frontend.h"
 #include "settings.h"
+#include "sht31.h"
 #include "wifi.h"
 
 settings_t settings;
@@ -20,6 +21,8 @@ settings_t settings;
 AsyncWebServer server(80);
 CaptivePortal captivePortal(&server);
 bool wifi_changed = false;
+float temperature = 0;
+float humidity = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -40,6 +43,8 @@ void setup() {
     ESP.restart();
     return;
   }
+
+  sht31_setup();
 
   captivePortal.setup(&settings);
 
@@ -69,6 +74,8 @@ void loop() {
     wifi_changed = false;
     wifi_connect(&settings);
   }
+
+  sht31_read(&temperature, &humidity);
 
   delay(1);
 }
