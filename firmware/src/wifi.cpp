@@ -13,7 +13,7 @@
 
 bool wifi_connect(settings_t* settings) {
     WiFi.begin(settings->wifiSSID, settings->wifiPassword);
-    if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    if (WiFi.waitForConnectResult(10000) != WL_CONNECTED) {
         return false;
     } else {
         WiFi.setAutoConnect(true);
