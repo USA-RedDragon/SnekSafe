@@ -35,6 +35,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         settings->timezoneOffset = default_settings.timezoneOffset;
 
         settings_write(settings);
+        wifi_update_timezone(settings);
 
         doc["status"] = "success";
         doc["message"] = "Settings reset to defaults";
