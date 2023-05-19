@@ -24,11 +24,16 @@ bool wifi_changed = false;
 
 void setup() {
   Serial.begin(9600);
+  // Serial.setDebugOutput(true);
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
 
   EEPROM.begin(sizeof(settings_t));
 
+  // settings_t default_settings2;
+  // default_settings2 = default_settings;
+
+  // settings_write(&default_settings2);
   settings_read(&settings);
 
   if (!LittleFS.begin()){
