@@ -37,8 +37,6 @@ void setup() {
     return;
   }
 
-  WiFi.mode(WIFI_STA);
-
   captivePortal.setup(&settings);
 
   api_setup(&server, &settings);
@@ -47,9 +45,7 @@ void setup() {
 
   server.begin();
 
-  if (wifi_connect(&settings)) {
-    Serial.printf("Wifi connected. IP: %s\n", WiFi.localIP().toString().c_str());
-  } else {
+  if (!wifi_connect(&settings)) {
     Serial.println("Wifi not connected.");
   }
 }
@@ -58,8 +54,8 @@ void loop() {
   captivePortal.loop();
 
   if (wifi_changed) {
-    wifi_connect(&settings);
     wifi_changed = false;
+    wifi_connect(&settings);
   }
 
   delay(1);

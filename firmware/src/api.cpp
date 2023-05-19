@@ -28,5 +28,6 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         request->send(response);
     });
 
+    api_wifi_setup(server, settings);
     api_settings_setup(server, settings);
 }
