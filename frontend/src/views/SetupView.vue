@@ -53,29 +53,34 @@
             <div class="card-footer-left">
               <PVButton
                 class="p-button-raised p-button-rounded p-button-secondary"
-                :icon="{
-                  'pi': true,
-                  'pi-wifi': !!!scanTimer
-                }"
                 :loading="!!scanTimer"
                 label="Scan"
                 type="button"
                 @click="scan"
                 :disabled="!!scanTimer"
-              />
+              >
+                <template #icon>
+                  <span style="padding-right: 0.5em;">
+                    <font-awesome-icon icon="fa-solid fa-wifi" v-if="!!!scanTimer"/>
+                    <font-awesome-icon icon="fa-solid fa-spinner" spin v-else/>
+                  </span>
+                </template>
+              </PVButton>
             </div>
             <div class="card-footer-right">
               <PVButton
                 class="p-button-raised p-button-rounded"
-                :icon="{
-                  'pi': true,
-                  'pi-save': !!!connectTimer
-                }"
                 label="Save"
                 type="submit"
                 :loading="!!connectTimer"
-                :disabled="!!connectTimer"
-              />
+                :disabled="!!connectTimer">
+                <template #icon>
+                  <span style="padding-right: 0.5em;">
+                    <font-awesome-icon icon="fa-regular fa-floppy-disk" v-if="!!!scanTimer"/>
+                    <font-awesome-icon icon="fa-solid fa-spinner" spin v-else/>
+                  </span>
+                </template>
+              </PVButton>
             </div>
           </div>
         </template>
@@ -93,9 +98,6 @@ import API from '@/services/API';
 
 import { useVuelidate } from '@vuelidate/core';
 import { required, maxLength, minLength } from '@vuelidate/validators';
-
-import { mapStores } from 'pinia';
-import { useSettingsStore } from '@/store/settings';
 
 export default {
   components: {
@@ -208,7 +210,10 @@ export default {
               detail: 'SSID not found',
               life: 3000,
             });
-          } else if (response.data.status == 'connect failed' || response.data.status == 'disconnected' || response.data.status == 'idle') {
+          } else if (
+            response.data.status == 'connect failed' ||
+              response.data.status == 'disconnected' ||
+              response.data.status == 'idle') {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
             this.$toast.add({
@@ -278,9 +283,7 @@ export default {
         });
     },
   },
-  computed: {
-    ...mapStores(useSettingsStore),
-  },
+  computed: { },
 };
 </script>
 

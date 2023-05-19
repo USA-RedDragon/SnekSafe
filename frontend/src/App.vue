@@ -6,11 +6,8 @@
 
 <script>
 import { RouterView } from 'vue-router';
-import AppFooter from './components/AppFooter.vue';
 import AppHeader from './components/AppHeader.vue';
-
-import { mapStores } from 'pinia';
-import { useSettingsStore } from '@/store/settings';
+import AppFooter from './components/AppFooter.vue';
 
 export default {
   name: 'App',
@@ -26,9 +23,7 @@ export default {
   mounted() {},
   unmounted() {},
   methods: {},
-  computed: {
-    ...mapStores(useSettingsStore),
-  },
+  computed: {},
 };
 </script>
 
