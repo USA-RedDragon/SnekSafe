@@ -1,14 +1,15 @@
 <template>
   <div>
     <PVToast />
-    <form @submit.prevent="sendWifiCredentials(!v$.$invalid)">
+    <form autocomplete="off" @submit.prevent="sendWifiCredentials(!v$.$invalid)">
       <Card>
         <template #title>Configure WiFi</template>
         <template #content>
           <span class="p-float-label">
             <Dropdown
               id="ssid"
-              v-model="v$.ssid.$model" editable :options="scanResults" placeholder="Select or type an SSID" :class="{
+              v-model="v$.ssid.$model" editable :options="scanResults" placeholder="Select or type an SSID"
+              :class="{
                 'p-invalid': v$.ssid.$invalid && submitted,
                 'w-full': true,
               }" />
@@ -29,6 +30,7 @@
             <InputText
               id="wifi_password"
               type="password"
+              autocomplete="new-password"
               v-model="v$.wifi_password.$model"
               :class="{
                 'p-invalid': v$.wifi_password.$invalid && submitted,
@@ -46,7 +48,6 @@
             </span>
             <br />
           </span>
-          <br />
         </template>
         <template #footer>
           <div class="card-footer-wrapper">
@@ -115,9 +116,9 @@ export default {
   unmounted() {},
   data: function() {
     return {
+      scanResults: [],
       ssid: '',
       wifi_password: '',
-      scanResults: [],
       submitted: false,
       connectTimer: null,
       scanTimer: null,
@@ -204,33 +205,39 @@ export default {
           } else if (response.data.status == 'no ssid available') {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
-            this.$toast.add({
-              summary: 'Error',
-              severity: 'error',
-              detail: 'SSID not found',
-              life: 3000,
-            });
+            if (this.submitted) {
+              this.$toast.add({
+                summary: 'Error',
+                severity: 'error',
+                detail: 'SSID not found',
+                life: 3000,
+              });
+            }
           } else if (
             response.data.status == 'connect failed' ||
               response.data.status == 'disconnected' ||
               response.data.status == 'idle') {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
-            this.$toast.add({
-              summary: 'Error',
-              severity: 'error',
-              detail: 'Connection failed',
-              life: 3000,
-            });
+            if (this.submitted) {
+              this.$toast.add({
+                summary: 'Error',
+                severity: 'error',
+                detail: 'Connection failed',
+                life: 3000,
+              });
+            }
           } else if (response.data.status == 'connection lost') {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
-            this.$toast.add({
-              summary: 'Error',
-              severity: 'error',
-              detail: 'Connection lost',
-              life: 3000,
-            });
+            if (this.submitted) {
+              this.$toast.add({
+                summary: 'Error',
+                severity: 'error',
+                detail: 'Connection lost',
+                life: 3000,
+              });
+            }
           }
         }
       });
@@ -287,20 +294,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.card-footer-left {
-  display: flex;
-  justify-content: flex-start;
-  float: left;
-}
-
-.card-footer-right {
-  display: flex;
-  justify-content: flex-end;
-  float: right;
-}
-
-.card-footer-wrapper {
-  width: 100%;
-}
-</style>
+<style scoped></style>

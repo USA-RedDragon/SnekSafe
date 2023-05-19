@@ -46,3 +46,19 @@ html {
 .p-toast {
   max-width: calc(100vw - 40px);
 }
+
+.card-footer-left {
+  display: flex;
+  justify-content: flex-start;
+  float: left;
+}
+
+.card-footer-right {
+  display: flex;
+  justify-content: flex-end;
+  float: right;
+}
+
+.card-footer-wrapper {
+  width: 100%;
+}
