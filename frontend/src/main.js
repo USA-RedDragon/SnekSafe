@@ -1,14 +1,28 @@
-import './assets/main.css'
+import './assets/main.css';
+import './assets/themes/md-dark-indigo/theme.css';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import App from './App.vue'
-import router from './router'
+import PrimeVue from 'primevue/config';
 
-const app = createApp(App)
+import ToastService from 'primevue/toastservice';
+import Toast from 'primevue/toast';
 
-app.use(createPinia())
-app.use(router)
+import 'primeflex/primeflex.scss';
+import 'primeicons/primeicons.css';
+import 'primevue/resources/primevue.min.css';
 
-app.mount('#app')
+import App from './App.vue';
+import router from './router';
+
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(router);
+app.use(PrimeVue);
+app.use(ToastService);
+
+app.component('PVToast', Toast);
+
+app.mount('#app');

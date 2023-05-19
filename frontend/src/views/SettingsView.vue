@@ -1,9 +1,9 @@
 <template>
   <div>
     <Card>
-      <template #title>Status</template>
+      <template #title>Settings</template>
       <template #content>
-        <p>Status</p>
+        <p>Settings</p>
       </template>
     </Card>
   </div>

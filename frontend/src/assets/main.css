@@ -1,35 +1,48 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
+*,
+*::before,
+*::after {
+  margin: 0;
   font-weight: normal;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+body {
+  min-height: 100vh;
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  --font-family:Roboto, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+#app {
+  margin: 0 auto;
+  padding: 1rem 2rem 0.4rem;
+  max-width: 90rem;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+html {
+  font-size: 16px;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+:root {
+  --border-radius: 20px;
+}
+
+.p-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.p-card {
+  padding: .75em;
+  border-radius: var(--border-radius);
+}
+
+.p-inputtext {
+  width: 100%;
+}
+
+.p-toast {
+  max-width: calc(100vw - 40px);
 }

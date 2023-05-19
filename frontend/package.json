@@ -11,7 +11,14 @@
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json"
   },
   "dependencies": {
+    "@vuelidate/core": "^2.0.2",
+    "@vuelidate/validators": "^2.0.2",
+    "axios": "^1.4.0",
+    "moment": "^2.29.4",
     "pinia": "^2.0.36",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.29.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
   },
@@ -19,15 +26,15 @@
     "@rushstack/eslint-patch": "^1.2.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
-    "@vue/test-utils": "^2.3.2",
-    "cypress": "^12.12.0",
+    "chart.js": "^4.3.0",
     "eslint": "^8.39.0",
+    "eslint-config-google": "^0.14.0",
     "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-vue": "^9.11.0",
     "jsdom": "^22.0.0",
     "prettier": "^2.8.8",
+    "sass": "^1.62.1",
     "start-server-and-test": "^2.0.0",
-    "vite": "^4.3.5",
-    "vitest": "^0.31.0"
+    "vite": "^4.3.5"
   }
 }
