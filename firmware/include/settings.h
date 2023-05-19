@@ -16,6 +16,8 @@ extern Preferences prefs;
 typedef struct
 {
     uint32_t structSize;
+    uint16_t crc;
+    // Put all new settings after this
 
     char captivePortalSSID[32+1]; // 32 chars + null terminator
     char captivePortalPassword[63+1]; // 63 chars + null terminator
@@ -26,15 +28,13 @@ typedef struct
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
     char mdnsName[32+1]; // 32 chars + null terminator
-
-    // Put all new settings before this
-    uint16_t crc;
 }
 __attribute__((packed)) settings_t;
 
 const settings_t default_settings =
 {
     sizeof(settings_t), // structSize
+    0, // crc
     "SnekSafe", // captivePortalSSID
     "", // captivePortalPassword
     6, // captivePortalChannel
@@ -43,8 +43,7 @@ const settings_t default_settings =
     0, // lightOffTime
     "", // wifiSSID
     "", // wifiPassword
-    "snek", // mdnsName
-    0 // crc
+    "snek", // mdnsName,
 };
 
 void settings_read(settings_t* dest);

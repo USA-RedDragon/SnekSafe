@@ -6,7 +6,7 @@
 Preferences prefs;
 
 void settings_read(settings_t* dest) {
-    settings_t read_settings;
+    settings_t read_settings = default_settings;
     *dest = default_settings;
 
     auto settings_size = prefs.getBytesLength("settings");
@@ -50,7 +50,7 @@ void settings_read(settings_t* dest) {
         }
 
         memcpy(dest, &read_settings, read_settings.structSize);
-        settings_write(dest);
+        settings_write(&read_settings);
     } else {
         Serial.println("NVM settings not found, using defaults");
         settings_write(dest);
@@ -60,9 +60,9 @@ void settings_read(settings_t* dest) {
 void settings_write(settings_t* src) {
     Serial.println("Writing settings to NVM");
     src->structSize = sizeof(settings_t);
-    src->crc = crc16((uint8_t*)src, src->structSize-sizeof(uint16_t));
+    src->crc = 0;
+    src->crc = crc16((uint8_t*)src, src->structSize);
     Serial.printf("CRC: %04X\n", src->crc);
-    prefs.remove("settings");
     prefs.putBytes("settings", src, sizeof(settings_t));
 }
 
