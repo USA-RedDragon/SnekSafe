@@ -7,6 +7,8 @@
 // DO NOT CHANGE THE ORDER OF EXISTING SETTINGS
 // DO NOT CHANGE THE DATA TYPE OF EXISTING SETTINGS, INCLUDING ARRAY LENGTHS
 // DO NOT REMOVE EXISTING SETTINGS, THIS IS NOT IMPLEMENTED YET
+
+#define NUMBER_OF_SETTINGS 11
 typedef struct
 {
     uint32_t structSize;
@@ -20,6 +22,7 @@ typedef struct
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
     char mdnsName[32+1]; // 32 chars + null terminator
+    char otaPassword[64+1]; // 64 chars + null terminator
 
     // Put all new settings before this
     uint16_t crc;
@@ -38,6 +41,7 @@ const settings_t default_settings =
     "", // wifiSSID
     "", // wifiPassword
     "snek", // mdnsName
+    "snekysnek", // otaPassword
     0 // crc
 };
 
