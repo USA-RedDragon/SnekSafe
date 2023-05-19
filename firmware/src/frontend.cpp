@@ -5,7 +5,8 @@
 
 void frontend_setup(AsyncWebServer* server) {
     server->serveStatic("/", LittleFS, "/");
-    server->serveStatic("/assets", LittleFS, "/assets").setCacheControl("max-age=600");
+    // 1y cache. The frontend is versioned, so we can cache it for a long time.
+    server->serveStatic("/assets", LittleFS, "/assets").setCacheControl("max-age=31536000");
 
     server->on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
         // If the user agent has "CaptiveNetworkSupport" in it, we should redirect to the captive portal
