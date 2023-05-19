@@ -2,6 +2,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
+#include <ESPmDNS.h>
 #include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
 #else
 #include <ESP8266mDNS.h>
@@ -15,17 +16,20 @@ bool wifi_connect(settings_t* settings) {
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
         return false;
     } else {
-        Serial.printf("WiFi Connected. IP=%s\n", WiFi.localIP().toString().c_str());
         WiFi.setAutoConnect(true);
         WiFi.setAutoReconnect(true);
-        #ifdef ARDUINO_ARCH_ESP8266
+        Serial.printf("WiFi Connected. IP=%s\n", WiFi.localIP().toString().c_str());
+#ifdef ARDUINO_ARCH_ESP32
+        if (!MDNS.begin(settings->mdnsName)) {
+#else
         if (!MDNS.begin(settings->mdnsName, WiFi.localIP())) {
-            Serial.println("Error setting up mDNS responder!");
+#endif
+            Serial.println("Error setting up mDNS responder");
         } else {
-            Serial.println("mDNS responder started on http://" + String(settings->mdnsName) + ".local");
+            if (MDNS.addService("http", "tcp", 80)) {
+                Serial.println("mDNS responder started on http://" + String(settings->mdnsName) + ".local");
+            }
         }
-        #endif
-
         return true;
     }
 }
