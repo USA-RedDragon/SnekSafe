@@ -4,7 +4,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
-#include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
+#include <WiFiUdp.h>
 #else
 #include <ESP8266WiFi.h>
 #endif
@@ -47,9 +47,11 @@ void setup() {
 
   frontend_setup(&server);
 
+#ifdef DEV
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "*");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
+#endif
 
   server.begin();
 
