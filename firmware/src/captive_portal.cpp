@@ -11,7 +11,8 @@
 
 #define MAX_AP_CLIENTS 4
 
-const char* CAPTIVE_PORTAL_LINK = "http://192.9.200.1/setup";
+const char* CAPTIVE_PORTAL_LINK_SETUP = "http://192.9.200.1/setup";
+const char* CAPTIVE_PORTAL_LINK = "http://192.9.200.1";
 const IPAddress CAPTIVE_PORTAL_IP = IPAddress(192, 9, 200, 1);
 const IPAddress CAPTIVE_PORTAL_GATEWAY = IPAddress(255, 255, 255, 0);
 
@@ -74,7 +75,11 @@ void CaptivePortal::loop() {
 void CaptivePortal::setupKnownEndpoints() {
     for (int i = 0; i < knownEndpointsSize; i++) {
         this->webServer->on(knownEndpoints[i], HTTP_ANY, [] (AsyncWebServerRequest *request) {
-            request->redirect(CAPTIVE_PORTAL_LINK);
+            if (WiFi.status() != WL_CONNECTED) {
+                request->redirect(CAPTIVE_PORTAL_LINK_SETUP);
+            } else {
+                request->redirect(CAPTIVE_PORTAL_LINK);
+            }
             Serial.printf("%s %s sent redirect to %s\n", request->host().c_str(), request->url().c_str(), CAPTIVE_PORTAL_LINK);
         });
     }

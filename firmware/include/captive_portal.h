@@ -7,6 +7,7 @@
 #include "settings.h"
 
 extern const char* CAPTIVE_PORTAL_LINK;
+extern const char* CAPTIVE_PORTAL_LINK_SETUP;
 extern const IPAddress CAPTIVE_PORTAL_IP;
 extern const IPAddress CAPTIVE_PORTAL_GATEWAY;
 

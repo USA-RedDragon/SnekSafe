@@ -10,7 +10,11 @@ void frontend_setup(AsyncWebServer* server) {
     server->on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
         // If the user agent has "CaptiveNetworkSupport" in it, we should redirect to the captive portal
         if (request->header("User-Agent").indexOf("CaptiveNetworkSupport") >= 0) {
-            request->redirect(CAPTIVE_PORTAL_LINK);
+            if (WiFi.status() != WL_CONNECTED) {
+                request->redirect(CAPTIVE_PORTAL_LINK_SETUP);
+            } else {
+                request->redirect(CAPTIVE_PORTAL_LINK);
+            }
         } else {
             request->send(LittleFS, "/index.html");
         }
