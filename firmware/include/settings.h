@@ -28,6 +28,7 @@ typedef struct
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
     char mdnsName[32+1]; // 32 chars + null terminator
+    int16_t timezoneOffset; // timezone offset in minutes from UTC
 }
 __attribute__((packed)) settings_t;
 
@@ -44,6 +45,7 @@ const settings_t default_settings =
     "", // wifiSSID
     "", // wifiPassword
     "snek", // mdnsName,
+    0, // timezoneOffset
 };
 
 void settings_read(settings_t* dest);

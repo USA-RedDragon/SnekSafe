@@ -2,6 +2,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
+#include <WiFiUdp.h>
 #include <ESPmDNS.h>
 #include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
 #else
@@ -9,7 +10,12 @@
 #include <ESP8266WiFi.h>
 #endif
 
+#include <NTPClient.h>
+
 #include "wifi.h"
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 bool wifi_connect(settings_t* settings) {
     WiFi.begin(settings->wifiSSID, settings->wifiPassword);
@@ -19,6 +25,11 @@ bool wifi_connect(settings_t* settings) {
         WiFi.setAutoConnect(true);
         WiFi.setAutoReconnect(true);
         Serial.printf("WiFi Connected. IP=%s\n", WiFi.localIP().toString().c_str());
+        timeClient.begin();
+        timeClient.setTimeOffset(settings->timezoneOffset);
+        if (!timeClient.update()) {
+            timeClient.forceUpdate();
+        }
 #ifdef ARDUINO_ARCH_ESP32
         if (!MDNS.begin(settings->mdnsName)) {
 #else
@@ -31,5 +42,11 @@ bool wifi_connect(settings_t* settings) {
             }
         }
         return true;
+    }
+}
+
+void wifi_update_time() {
+    if (WiFi.status() == WL_CONNECTED) {
+        timeClient.update();
     }
 }

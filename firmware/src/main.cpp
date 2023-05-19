@@ -61,6 +61,8 @@ void setup() {
 void loop() {
   captivePortal.loop();
 
+  wifi_update_time();
+
   if (wifi_changed) {
     wifi_changed = false;
     wifi_connect(&settings);
