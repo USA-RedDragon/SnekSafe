@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
-#include <EEPROM.h>
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
@@ -28,7 +27,7 @@ void setup() {
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
 
-  EEPROM.begin(sizeof(settings_t));
+  prefs.begin("settings");
 
   // settings_t default_settings2;
   // default_settings2 = default_settings;

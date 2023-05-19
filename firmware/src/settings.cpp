@@ -1,29 +1,35 @@
 #include <Arduino.h>
-#include <EEPROM.h>
 
 #include "crc.h"
 #include "settings.h"
+
+Preferences prefs;
 
 void settings_read(settings_t* dest) {
     settings_t read_settings;
     *dest = default_settings;
 
-    read_settings = EEPROM.get(0, read_settings);
-    Serial.printf("EEPROM settings structSize: %d\n", read_settings.structSize);
+    auto settings_size = prefs.getBytesLength("settings");
+    char buffer[sizeof(settings_t)];
+    prefs.getBytes("settings", buffer, settings_size);
+    memcpy(&read_settings, buffer, settings_size);
+
+    Serial.printf("NVM settings structSize: %d\n", read_settings.structSize);
     Serial.printf("Actual settings structSize: %d\n", sizeof(settings_t));
-    Serial.printf("EEPROM settings crc: %04X\n", read_settings.crc);
+    Serial.printf("NVM settings crc: %04X\n", read_settings.crc);
+    Serial.printf("NVM settings wifi: %s\n", read_settings.wifiSSID);
 
     if (read_settings.structSize > sizeof(settings_t)) {
-        Serial.println("EEPROM settings structure size is bigger than expected, using defaults");
+        Serial.println("NVM settings structure size is bigger than expected, using defaults");
         settings_write(dest);
     } else if (read_settings.structSize == sizeof(settings_t)) {
         // Settings found of the correct size
-        Serial.println("EEPROM settings found of the correct size");
+        Serial.println("NVM settings found of the correct size");
 
         if (settings_check_crc(&read_settings)) {
-            Serial.println("EEPROM settings CRC matches");
+            Serial.println("NVM settings CRC matches");
         } else {
-            Serial.println("EEPROM settings CRC mismatch, using defaults");
+            Serial.println("NVM settings CRC mismatch, using defaults");
             settings_write(dest);
             return;
         }
@@ -32,13 +38,13 @@ void settings_read(settings_t* dest) {
     } else if (read_settings.structSize < sizeof(settings_t)) {
         // Settings found of a smaller size
         // We have potentially added new fields, so memcpy the old settings into the settings struct
-        Serial.println("EEPROM settings found of a bigger size");
+        Serial.println("NVM settings found of a bigger size");
         
         // Check the CRC of the existing settings
         if (settings_check_crc(&read_settings)) {
-            Serial.println("EEPROM settings CRC matches");
+            Serial.println("NVM settings CRC matches");
         } else {
-            Serial.println("EEPROM settings CRC mismatch, using defaults");
+            Serial.println("NVM settings CRC mismatch, using defaults");
             settings_write(dest);
             return;
         }
@@ -46,18 +52,18 @@ void settings_read(settings_t* dest) {
         memcpy(dest, &read_settings, read_settings.structSize);
         settings_write(dest);
     } else {
-        Serial.println("EEPROM settings not found, using defaults");
+        Serial.println("NVM settings not found, using defaults");
         settings_write(dest);
     }
 }
 
 void settings_write(settings_t* src) {
-    Serial.println("Writing settings to EEPROM");
+    Serial.println("Writing settings to NVM");
     src->structSize = sizeof(settings_t);
     src->crc = crc16((uint8_t*)src, src->structSize-sizeof(uint16_t));
     Serial.printf("CRC: %04X\n", src->crc);
-    EEPROM.put(0, *src);
-    EEPROM.commit();
+    prefs.remove("settings");
+    prefs.putBytes("settings", src, sizeof(settings_t));
 }
 
 bool settings_check_crc(settings_t* settings) {
