@@ -538,7 +538,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "sneksafe.step",
+      "step": "../sneksafe.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
