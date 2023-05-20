@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
+#include <FireTimer.h>
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
@@ -41,6 +42,11 @@ PID pidController = PID(
   &temperature,
   &heaterPulseWidth
 );
+
+FireTimer timer3s;
+FireTimer timer10s;
+FireTimer timer30s;
+FireTimer timer1m;
 
 void setup() {
   pinMode(HEATER_PIN, OUTPUT);
@@ -87,7 +93,10 @@ void setup() {
     Serial.println("Wifi not connected.");
   }
 
-  pidController.begin();
+  timer3s.begin(1000 * 3);
+  timer10s.begin(1000 * 10);
+  timer30s.begin(1000 * 30);
+  timer1m.begin(1000 * 60);
 
   // Check time, see if light should be on
 }
