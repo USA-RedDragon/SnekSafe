@@ -14,6 +14,11 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         doc["lightOffTime"] = settings->lightOffTime;
         doc["wifiSSID"] = settings->wifiSSID;
         doc["mdnsName"] = settings->mdnsName;
+        doc["pGain"] = settings->pGain;
+        doc["iGain"] = settings->iGain;
+        doc["dGain"] = settings->dGain;
+        doc["iMax"] = settings->iMax;
+        doc["iMin"] = settings->iMin;
         response->setLength();
         request->send(response);
     });
@@ -31,6 +36,11 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         strncpy(settings->wifiSSID, default_settings.wifiSSID, sizeof(settings->wifiSSID));
         strncpy(settings->wifiPassword, default_settings.wifiPassword, sizeof(settings->wifiPassword));
         strncpy(settings->mdnsName, default_settings.mdnsName, sizeof(settings->mdnsName));
+        settings->pGain = default_settings.pGain;
+        settings->iGain = default_settings.iGain;
+        settings->dGain = default_settings.dGain;
+        settings->iMax = default_settings.iMax;
+        settings->iMin = default_settings.iMin;
 
         settings_write(settings);
 
@@ -250,6 +260,71 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             strncpy(settings->wifiPassword, wifiPassword, wifiPassword_len);
             settings->wifiPassword[wifiPassword_len] = '\0';
             wifi_changed = true;
+        }
+
+        if (body.containsKey("pGain")) {
+            int pGain = body["pGain"];
+            if (pGain < 0) {
+                root["status"] = "error";
+                root["message"] = "pGain out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->pGain = pGain;
+        }
+
+        if (body.containsKey("iGain")) {
+            int iGain = body["iGain"];
+            if (iGain < 0) {
+                root["status"] = "error";
+                root["message"] = "iGain out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->iGain = iGain;
+        }
+
+        if (body.containsKey("dGain")) {
+            int dGain = body["dGain"];
+            if (dGain < 0) {
+                root["status"] = "error";
+                root["message"] = "dGain out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->dGain = dGain;
+        }
+
+        if (body.containsKey("iMax")) {
+            int iMax = body["iMax"];
+            if (iMax < 0) {
+                root["status"] = "error";
+                root["message"] = "iMax out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->iMax = iMax;
+        }
+
+        if (body.containsKey("iMin")) {
+            int iMin = body["iMin"];
+            if (iMin < 0) {
+                root["status"] = "error";
+                root["message"] = "iMin out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->iMin = iMin;
         }
 
         root["status"] = "success";
