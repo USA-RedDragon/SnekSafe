@@ -17,6 +17,9 @@
 #include "sht31.h"
 #include "wifi.h"
 
+const int HEATER_PIN = 18;
+const int LIGHT_PIN = 19;
+
 settings_t settings;
 
 AsyncWebServer server(80);
@@ -40,6 +43,9 @@ PID pidController = PID(
 );
 
 void setup() {
+  pinMode(HEATER_PIN, OUTPUT);
+  pinMode(LIGHT_PIN, OUTPUT);
+
   Serial.begin(9600);
 #ifdef DEV
   Serial.setDebugOutput(true);
