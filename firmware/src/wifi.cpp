@@ -15,6 +15,7 @@
 #include "wifi.h"
 
 WiFiUDP ntpUDP;
+ESP32Time rtc(0);
 NTPClient timeClient(ntpUDP);
 
 bool wifi_connect(settings_t* settings) {
@@ -28,7 +29,9 @@ bool wifi_connect(settings_t* settings) {
         timeClient.begin();
         timeClient.setTimeOffset(settings->timezoneOffset * 60);
         if (!timeClient.update()) {
-            timeClient.forceUpdate();
+            if (timeClient.forceUpdate()) {
+                rtc.setTime(timeClient.getEpochTime());
+            }
         }
 #ifdef ARDUINO_ARCH_ESP32
         if (!MDNS.begin(settings->mdnsName)) {
@@ -47,7 +50,9 @@ bool wifi_connect(settings_t* settings) {
 
 void wifi_update_time() {
     if (WiFi.status() == WL_CONNECTED) {
-        timeClient.update();
+        if (timeClient.update()) {
+            rtc.setTime(timeClient.getEpochTime());
+        }
     }
 }
 
