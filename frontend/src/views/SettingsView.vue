@@ -376,7 +376,6 @@
             </span>
             <br />
           </span>
-          <br />
         </template>
         <template #footer>
           <div>
