@@ -123,22 +123,56 @@ void loop() {
     wifi_connect(&settings);
   }
 
-  pidController.debug();
-  Serial.println("");
-  Serial.println("");
-
   // Collect temp readings every 3 seconds
-  // Humidity readings are only updated every 10 seconds
-  // when humidity > 80%, turn on sht31 heater
-  float temp;
-  sht31_read(&temp, &humidity);
-  temperature = temp;
+  if(timer3s.fire()) {
+    bool prevHeat = sht31_get_heater();
+    sht31_set_heater(false);
+    if (sht31_read(&stagedTemperature, &stagedHumidity)) {
+      temperature = (float) stagedTemperature;
+      lastUpdate = rtc.getEpoch();
+      Serial.print("Temp *F = "); Serial.println(temperature);
+      // we have a reading, if the pid controller is not started, start it
+      if (!pidController.isStarted()) {
+        Serial.println("Starting PID controller");
+        pidController.begin();
+      }
+    } else {
+      Serial.println("Failed to read temperature in 3s loop");
+    }
+    sht31_set_heater(prevHeat);
+  }
 
-  Serial.print("Temp *F = "); Serial.print(temperature); Serial.print("\t\t");
-  Serial.print("Hum. % = "); Serial.println(humidity);
+  // Humidity readings are only updated every 10 seconds
+  if(timer10s.fire()) {
+    bool prevHeat = sht31_get_heater();
+    sht31_set_heater(false);
+    if (sht31_read(&stagedTemperature, &stagedHumidity)) {
+      humidity = stagedHumidity;
+      Serial.print("Hum. % = "); Serial.println(humidity);
+    } else {
+      Serial.println("Failed to read humidity in 10s loop");
+    }
+    sht31_set_heater(prevHeat);
+  }
 
   // Call pidController.compute() every 30 seconds,
   // which updates the heaterPulseWidth value.
+  if(timer30s.fire()) {
+    pidController.compute();
+    heatState = heaterPulseWidth > 0;
+    Serial.println("");
+    pidController.debug();
+    Serial.println("");
+  }
 
-  delay(6000);
+  if(timer1m.fire()) {
+    bool prevHeat = sht31_get_heater();
+    if (humidity > 95 && !prevHeat) {
+      Serial.println("SHT31 Heater Enabled");
+      sht31_set_heater(true);
+    } else if (prevHeat) {
+      Serial.println("SHT31 Heater Disabled");
+      sht31_set_heater(false);
+    }
+  }
 }
