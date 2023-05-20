@@ -6,6 +6,7 @@ Keep your snek safe by controlling temperature and lighting.
 
 ![Board Top](pics/sneksafe-top.png)
 ![Board Bottom](pics/sneksafe-bottom.png)
+![Board Enclosure](pics/enclosure.png)
 
 ## Schematic
 
