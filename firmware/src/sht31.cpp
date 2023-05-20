@@ -18,13 +18,16 @@ void sht31_setup() {
     }
 }
 
-void sht31_read(float* temperature, float* humidity) {
+bool sht31_read(float* temperature, float* humidity) {
     float t = sht31.readTemperature();
     float h = sht31.readHumidity();
+
+    bool ret = false;
 
     if (!isnan(t)) {
         // convert to fahrenheit
         t = (t * 1.8) + 32;
+        ret = true;
         *temperature = t;
     } else {
         Serial.println("Failed to read temperature");
@@ -34,15 +37,20 @@ void sht31_read(float* temperature, float* humidity) {
         *humidity = h;
     } else {
         Serial.println("Failed to read humidity");
+        ret = false;
     }
+
+    return ret;
 }
 
 void sht31_set_heater(bool enabled) {
     if (enabled) {
         sht31.heater(true);
-        Serial.println("Heater Enabled");
     } else {
         sht31.heater(false);
-        Serial.println("Heater Disabled");
     }
+}
+
+bool sht31_get_heater() {
+    return sht31.isHeaterEnabled();
 }
