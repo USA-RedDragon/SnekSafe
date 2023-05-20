@@ -48,11 +48,11 @@ const settings_t default_settings =
     "", // wifiSSID
     "", // wifiPassword
     "snek", // mdnsName,
-    0, // pGain
+    1, // pGain
     0, // iGain
     0, // dGain
-    0, // iMax
-    0, // iMin
+    100, // iMax
+    1, // iMin
 };
 
 void settings_read(settings_t* dest);

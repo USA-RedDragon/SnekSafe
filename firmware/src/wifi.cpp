@@ -12,6 +12,7 @@
 
 #include <NTPClient.h>
 
+#include "globals.h"
 #include "wifi.h"
 
 WiFiUDP ntpUDP;

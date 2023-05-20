@@ -13,6 +13,7 @@
 #include "api.h"
 #include "captive_portal.h"
 #include "frontend.h"
+#include "globals.h"
 #include "pid.hpp"
 #include "settings.h"
 #include "sht31.h"
@@ -21,16 +22,21 @@
 const int HEATER_PIN = 18;
 const int LIGHT_PIN = 19;
 
-settings_t settings;
+// Program-wide globals
+bool heatState = false;
+bool lightState = false;
+unsigned long lastUpdate = 0;
+bool wifi_changed = false;
+double temperature = 0;
+float humidity = 0;
+double heaterPulseWidth = 0;
 
+// File globals
+settings_t settings;
 AsyncWebServer server(80);
 CaptivePortal captivePortal(&server);
-
-bool wifi_changed = false;
-
-double temperature = 0;
-double heaterPulseWidth = 0;
-float humidity = 0;
+float stagedHumidity = 0;
+float stagedTemperature = 0;
 
 PID pidController = PID(
   &(settings.pGain),

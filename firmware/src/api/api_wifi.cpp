@@ -9,6 +9,7 @@
 #include <AsyncJson.h>
 
 #include "api.h"
+#include "globals.h"
 #include "wifi.h"
 
 void api_wifi_setup(AsyncWebServer* server, settings_t* settings) {
