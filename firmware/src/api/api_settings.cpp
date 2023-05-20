@@ -14,7 +14,6 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         doc["lightOffTime"] = settings->lightOffTime;
         doc["wifiSSID"] = settings->wifiSSID;
         doc["mdnsName"] = settings->mdnsName;
-        doc["timezoneOffset"] = settings->timezoneOffset;
         response->setLength();
         request->send(response);
     });
@@ -32,10 +31,8 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         strncpy(settings->wifiSSID, default_settings.wifiSSID, sizeof(settings->wifiSSID));
         strncpy(settings->wifiPassword, default_settings.wifiPassword, sizeof(settings->wifiPassword));
         strncpy(settings->mdnsName, default_settings.mdnsName, sizeof(settings->mdnsName));
-        settings->timezoneOffset = default_settings.timezoneOffset;
 
         settings_write(settings);
-        wifi_update_timezone(settings);
 
         doc["status"] = "success";
         doc["message"] = "Settings reset to defaults";
@@ -253,21 +250,6 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             strncpy(settings->wifiPassword, wifiPassword, wifiPassword_len);
             settings->wifiPassword[wifiPassword_len] = '\0';
             wifi_changed = true;
-        }
-
-        // timezoneOffset
-        if (body.containsKey("timezoneOffset")) {
-            int timezoneOffset = body["timezoneOffset"];
-            if (timezoneOffset < -720 || timezoneOffset > 720) {
-                root["status"] = "error";
-                root["message"] = "timezoneOffset out of range";
-                response->setCode(400);
-                response->setLength();
-                request->send(response);
-                return;
-            }
-            settings->timezoneOffset = timezoneOffset;
-            wifi_update_timezone(settings);
         }
 
         root["status"] = "success";
