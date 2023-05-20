@@ -32,12 +32,12 @@ double heaterPulseWidth = 0;
 float humidity = 0;
 
 PID pidController = PID(
-  &settings.pGain,
-  &settings.iGain,
-  &settings.dGain,
-  &settings.iMax,
-  &settings.iMin,
-  &settings.temperatureSetpoint,
+  &(settings.pGain),
+  &(settings.iGain),
+  &(settings.dGain),
+  &(settings.iMax),
+  &(settings.iMin),
+  &(settings.temperatureSetpoint),
   &temperature,
   &heaterPulseWidth
 );
@@ -88,6 +88,8 @@ void setup() {
   }
 
   pidController.begin();
+
+  // Check time, see if light should be on
 }
 
 void loop() {
