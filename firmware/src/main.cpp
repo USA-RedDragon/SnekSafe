@@ -41,7 +41,9 @@ PID pidController = PID(
 
 void setup() {
   Serial.begin(9600);
-  // Serial.setDebugOutput(true);
+#ifdef DEV
+  Serial.setDebugOutput(true);
+#endif
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
 
