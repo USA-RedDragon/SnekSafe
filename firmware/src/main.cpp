@@ -12,6 +12,7 @@
 #include "api.h"
 #include "captive_portal.h"
 #include "frontend.h"
+#include "pid.hpp"
 #include "settings.h"
 #include "sht31.h"
 #include "wifi.h"
@@ -20,9 +21,23 @@ settings_t settings;
 
 AsyncWebServer server(80);
 CaptivePortal captivePortal(&server);
+
 bool wifi_changed = false;
-float temperature = 0;
+
+double temperature = 0;
+double heaterPulseWidth = 0;
 float humidity = 0;
+
+PID pidController = PID(
+  &settings.pGain,
+  &settings.iGain,
+  &settings.dGain,
+  &settings.iMax,
+  &settings.iMin,
+  &settings.temperatureSetpoint,
+  &temperature,
+  &heaterPulseWidth
+);
 
 void setup() {
   Serial.begin(9600);
@@ -63,6 +78,8 @@ void setup() {
   if (!wifi_connect(&settings)) {
     Serial.println("Wifi not connected.");
   }
+
+  pidController.begin();
 }
 
 void loop() {
@@ -76,6 +93,8 @@ void loop() {
   }
 
   sht31_read(&temperature, &humidity);
+
+  pidController.debug();
 
   delay(1);
 }

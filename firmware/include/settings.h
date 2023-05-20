@@ -28,7 +28,11 @@ typedef struct
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
     char mdnsName[32+1]; // 32 chars + null terminator
-    int16_t timezoneOffset; // timezone offset in minutes from UTC
+    double pGain; // PID proportional gain
+    double iGain; // PID integral gain
+    double dGain; // PID derivative gain
+    double iMax; // PID integral max
+    double iMin; // PID integral min
 }
 __attribute__((packed)) settings_t;
 
@@ -45,7 +49,11 @@ const settings_t default_settings =
     "", // wifiSSID
     "", // wifiPassword
     "snek", // mdnsName,
-    0, // timezoneOffset
+    0, // pGain
+    0, // iGain
+    0, // dGain
+    0, // iMax
+    0, // iMin
 };
 
 void settings_read(settings_t* dest);
