@@ -78,13 +78,10 @@
               <PVButton
                 class="p-button-raised p-button-rounded"
                 label="Save"
-                type="submit"
-                :loading="!!connectTimer"
-                :disabled="!!connectTimer">
+                type="submit">
                 <template #icon>
                   <span style="padding-right: 0.5em;">
-                    <font-awesome-icon icon="fa-regular fa-floppy-disk" v-if="!!!scanTimer"/>
-                    <font-awesome-icon icon="fa-solid fa-spinner" spin v-else/>
+                    <font-awesome-icon icon="fa-regular fa-floppy-disk" />
                   </span>
                 </template>
               </PVButton>
