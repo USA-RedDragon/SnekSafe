@@ -13,9 +13,9 @@
       <Card class="halfWidth">
         <template #title>Controls</template>
         <template #content>
-          <p><span style="font-weight: bold;">Temperature</span>: {{ temperature }}</p>
-          <p><span style="font-weight: bold;">Humidity</span>: {{ humidity }}</p>
           <p><span style="font-weight: bold;">Last Update</span>: {{ lastUpdate }}</p>
+          <p><span style="font-weight: bold;">Temperature</span>: {{ temperature }} &deg;F</p>
+          <p><span style="font-weight: bold;">Humidity</span>: {{ humidity }}%</p>
           <br />
           <font-awesome-icon icon="fa-regular fa-lightbulb" style="padding-right: 0.5em;"/>
           <label for="light">Light</label>
