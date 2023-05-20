@@ -1,6 +1,8 @@
 #include <AsyncJson.h>
 
 #include "api.h"
+#include "globals.h"
+#include "pid.hpp"
 #include "wifi.h"
 
 void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
@@ -312,6 +314,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
                 return;
             }
             settings->iMax = iMax;
+            pidController.setIMax(iMax);
         }
 
         if (body.containsKey("iMin")) {
@@ -325,6 +328,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
                 return;
             }
             settings->iMin = iMin;
+            pidController.setIMin(iMin);
         }
 
         root["status"] = "success";
