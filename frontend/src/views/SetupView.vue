@@ -77,7 +77,7 @@
                 :disabled="!!connectTimer">
                 <template #icon>
                   <span style="padding-right: 0.5em;">
-                    <font-awesome-icon icon="fa-regular fa-floppy-disk" v-if="!!!scanTimer"/>
+                    <font-awesome-icon icon="fa-regular fa-floppy-disk" v-if="!!!connectTimer"/>
                     <font-awesome-icon icon="fa-solid fa-spinner" spin v-else/>
                   </span>
                 </template>
@@ -198,7 +198,7 @@ export default {
     checkConnectStatus() {
       API.get('/wifi/status').then((response) => {
         if (response.data && response.data.status != 'error') {
-          if (response.data.status == 'connected') {
+          if (response.data.ssid) {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
             this.$router.push({ name: 'home' });
@@ -215,8 +215,7 @@ export default {
             }
           } else if (
             response.data.status == 'connect failed' ||
-              response.data.status == 'disconnected' ||
-              response.data.status == 'idle') {
+              response.data.status == 'disconnected') {
             clearInterval(this.connectTimer);
             this.connectTimer = null;
             if (this.submitted) {
