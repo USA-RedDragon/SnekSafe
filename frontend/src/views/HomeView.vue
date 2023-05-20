@@ -16,6 +16,7 @@
           <p><span style="font-weight: bold;">Last Update</span>: {{ lastUpdate }}</p>
           <p><span style="font-weight: bold;">Temperature</span>: {{ temperature }} &deg;F</p>
           <p><span style="font-weight: bold;">Humidity</span>: {{ humidity }}%</p>
+          <p><span style="font-weight: bold;">Heater Pulse Width</span>: {{ heaterPulseWidth }}%</p>
           <br />
           <font-awesome-icon icon="fa-regular fa-lightbulb" style="padding-right: 0.5em;"/>
           <label for="light">Light</label>
@@ -79,6 +80,7 @@ export default {
       temperature: 0,
       humidity: 0,
       lastUpdate: '',
+      heaterPulseWidth: 0,
       heat: false,
       light: false,
       historyTemperature: [],
@@ -154,6 +156,23 @@ export default {
       this.historyHumidity = [51, 50, 49, 48, 47, 46];
     },
     getState() {
+      API.get('/state')
+        .then((response) => {
+          if (response.data && response.data.status != 'error') {
+            // Trim all but two decimal places from the temperature and humidity
+            this.temperature = response.data.temperature.toFixed(2);
+            this.humidity = response.data.humidity.toFixed(2);
+            // lastUpdate is the number of seconds since the epoch
+            this.lastUpdate = moment.unix(response.data.lastUpdate).fromNow();
+            // heaterPulseWidth is between 0 and 255, but we want to display it as a percentage
+            this.heaterPulseWidth = Math.round((response.data.heaterPulseWidth / 255) * 100);
+            this.heat = response.data.heat;
+            this.light = response.data.light;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   computed: {
