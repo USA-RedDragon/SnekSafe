@@ -23,14 +23,14 @@ void sht31_read(float* temperature, float* humidity) {
     float h = sht31.readHumidity();
 
     if (!isnan(t)) {
-        Serial.print("Temp *C = "); Serial.print(t); Serial.print("\t\t");
+        // convert to fahrenheit
+        t = (t * 1.8) + 32;
         *temperature = t;
     } else {
         Serial.println("Failed to read temperature");
     }
 
     if (!isnan(h)) {
-        Serial.print("Hum. % = "); Serial.println(h);
         *humidity = h;
     } else {
         Serial.println("Failed to read humidity");
