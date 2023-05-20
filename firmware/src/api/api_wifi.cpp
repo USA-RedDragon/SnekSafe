@@ -192,10 +192,9 @@ void api_wifi_setup(AsyncWebServer* server, settings_t* settings) {
         root["status"] = "ok";
         root["message"] = "WiFi settings saved";
 
-        wifi_changed = true;
-
         response->setLength();
         request->send(response);
+        wifi_changed = true;
     });
     server->addHandler(handler);
 }
