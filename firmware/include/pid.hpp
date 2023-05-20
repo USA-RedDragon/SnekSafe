@@ -18,6 +18,10 @@ public:
 
     void debug();
     void begin();
+    bool isStarted();
+    void compute();
+    void setIMin(double iMin);
+    void setIMax(double iMax);
 
 private:
     double* pGain;
@@ -29,6 +33,9 @@ private:
     double* input;
     double* output;
     ArduPID pidController;
+    bool started;
 };
+
+extern PID pidController;
 
 #endif
