@@ -70,7 +70,7 @@ bool settings_check_crc(settings_t* settings) {
     bool ret = false;
     uint16_t read_crc = settings->crc;
     settings->crc = 0;
-    if (crc16((uint8_t*)settings, settings->structSize-sizeof(uint16_t)) == read_crc) {
+    if (crc16((uint8_t*)settings, settings->structSize) == read_crc) {
         ret = true;
     }
     settings->crc = read_crc;
