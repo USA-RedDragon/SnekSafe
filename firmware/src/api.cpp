@@ -3,6 +3,7 @@
 #include "api.h"
 #include "api/api_wifi.h"
 #include "api/api_settings.h"
+#include "globals.h"
 
 void api_setup(AsyncWebServer* server, settings_t* settings) {
     server->on("/ping", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -15,6 +16,21 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         char commitHash[25];
         sprintf(commitHash, "v1.0.0-%s", GIT_COMMIT);
         request->send(200, "text/plain", commitHash);
+    });
+
+    server->on("/api/v1/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        AsyncJsonResponse* response = new AsyncJsonResponse();
+        const JsonObject& doc = response->getRoot();
+
+        doc["temperature"] = temperature;
+        doc["humidity"] = humidity;
+        doc["lastUpdate"] = lastUpdate;
+        doc["heat"] = heatState;
+        doc["light"] = lightState;
+        doc["heaterPulseWidth"] = heaterPulseWidth;
+
+        response->setLength();
+        request->send(response);
     });
 
     server->on("/api/v1/heap", HTTP_GET, [] (AsyncWebServerRequest *request) {
