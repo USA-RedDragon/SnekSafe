@@ -92,9 +92,22 @@ void loop() {
     wifi_connect(&settings);
   }
 
-  sht31_read(&temperature, &humidity);
-
   pidController.debug();
+  Serial.println("");
+  Serial.println("");
 
-  delay(1);
+  // Collect temp readings every 3 seconds
+  // Humidity readings are only updated every 10 seconds
+  // when humidity > 80%, turn on sht31 heater
+  float temp;
+  sht31_read(&temp, &humidity);
+  temperature = temp;
+
+  Serial.print("Temp *F = "); Serial.print(temperature); Serial.print("\t\t");
+  Serial.print("Hum. % = "); Serial.println(humidity);
+
+  // Call pidController.compute() every 30 seconds,
+  // which updates the heaterPulseWidth value.
+
+  delay(6000);
 }

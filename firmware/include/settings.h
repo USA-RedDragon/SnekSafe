@@ -12,7 +12,6 @@ extern Preferences prefs;
 // DO NOT CHANGE THE DATA TYPE OF EXISTING SETTINGS, INCLUDING ARRAY LENGTHS
 // DO NOT REMOVE EXISTING SETTINGS, THIS IS NOT IMPLEMENTED YET
 
-#define NUMBER_OF_SETTINGS 10
 typedef struct
 {
     uint32_t structSize;
@@ -22,7 +21,7 @@ typedef struct
     char captivePortalSSID[32+1]; // 32 chars + null terminator
     char captivePortalPassword[63+1]; // 63 chars + null terminator
     uint8_t captivePortalChannel; // 1-13, wifi channel
-    uint8_t temperatureSetpoint; // 0-255, temperature setpoint in degrees F
+    double temperatureSetpoint; // temperature setpoint in degrees F
     time_t lightOnTime; // time_t, time of day to turn on light
     time_t lightOffTime; // time_t, time of day to turn off light
     char wifiSSID[32+1]; // 32 chars + null terminator
