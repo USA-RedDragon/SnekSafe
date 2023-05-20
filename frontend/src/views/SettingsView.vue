@@ -250,6 +250,152 @@
       </Card>
       <br />
       <Card>
+        <template #title>PID Tuning</template>
+        <template #content>
+          <span class="p-float-label">
+            <InputText
+              id="pGain"
+              v-model.number="v$.pGain.$model"
+              :class="{
+                'p-invalid': v$.pGain.$invalid && submitted,
+                'w-full': true,
+              }" />
+            <Slider v-model="v$.pGain.$model" :min="0" :max="100"
+              :class="{
+                'p-invalid': v$.pGain.$invalid && submitted,
+              }" />
+            <label
+              for="pGain"
+              :class="{ 'p-error': v$.pGain.$invalid && submitted }"
+              >Proportional Gain</label
+            >
+          </span>
+          <span v-if="v$.pGain.$error && submitted">
+            <span v-for="(error, index) of v$.pGain.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
+          <span class="p-float-label">
+            <InputText
+              id="iGain"
+              v-model.number="v$.iGain.$model"
+              :class="{
+                'p-invalid': v$.iGain.$invalid && submitted,
+                'w-full': true,
+              }" />
+            <Slider v-model="v$.iGain.$model" :min="0" :max="100"
+              :class="{
+                'p-invalid': v$.iGain.$invalid && submitted,
+              }" />
+            <label
+              for="iGain"
+              :class="{ 'p-error': v$.iGain.$invalid && submitted }"
+              >Integral Gain</label
+            >
+          </span>
+          <span v-if="v$.iGain.$error && submitted">
+            <span v-for="(error, index) of v$.iGain.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
+          <span class="p-float-label">
+            <InputText
+              id="dGain"
+              v-model.number="v$.dGain.$model"
+              :class="{
+                'p-invalid': v$.dGain.$invalid && submitted,
+                'w-full': true,
+              }" />
+            <Slider v-model="v$.dGain.$model" :min="0" :max="100"
+              :class="{
+                'p-invalid': v$.dGain.$invalid && submitted,
+              }" />
+            <label
+              for="dGain"
+              :class="{ 'p-error': v$.dGain.$invalid && submitted }"
+              >Derivative Gain</label
+            >
+          </span>
+          <span v-if="v$.dGain.$error && submitted">
+            <span v-for="(error, index) of v$.dGain.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
+          <span class="p-float-label">
+            <InputText
+              id="iMin"
+              v-model.number="v$.iMin.$model"
+              :class="{
+                'p-invalid': v$.iMin.$invalid && submitted,
+                'w-full': true,
+              }" />
+            <Slider v-model="v$.iMin.$model" :min="0" :max="100"
+              :class="{
+                'p-invalid': v$.iMin.$invalid && submitted,
+              }" />
+            <label
+              for="iMin"
+              :class="{ 'p-error': v$.iMin.$invalid && submitted }"
+              >Minimum Integral Term</label
+            >
+          </span>
+          <span v-if="v$.iMin.$error && submitted">
+            <span v-for="(error, index) of v$.iMin.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
+          <span class="p-float-label">
+            <InputText
+              id="iMax"
+              v-model.number="v$.iMax.$model"
+              :class="{
+                'p-invalid': v$.iMax.$invalid && submitted,
+                'w-full': true,
+              }" />
+            <Slider v-model="v$.iMax.$model" :min="0" :max="100"
+              :class="{
+                'p-invalid': v$.iMax.$invalid && submitted,
+              }" />
+            <label
+              for="iMax"
+              :class="{ 'p-error': v$.iMax.$invalid && submitted }"
+              >Maximum Integral Term</label
+            >
+          </span>
+          <span v-if="v$.iMax.$error && submitted">
+            <span v-for="(error, index) of v$.iMax.$errors" :key="index">
+              <small class="p-error">{{ error.$message }}</small>
+            </span>
+            <br />
+          </span>
+          <br />
+        </template>
+        <template #footer>
+          <div>
+            <PVButton
+              class="p-button-raised p-button-rounded"
+              label="Save"
+              type="submit">
+              <template #icon>
+                <span style="padding-right: 0.5em;">
+                  <font-awesome-icon icon="fa-regular fa-floppy-disk" v-if="!!!scanTimer"/>
+                  <font-awesome-icon icon="fa-solid fa-spinner" spin v-else/>
+                </span>
+              </template>
+            </PVButton>
+          </div>
+        </template>
+      </Card>
+      <br />
+      <Card>
         <template #title>Reset to Defaults</template>
         <template #content>
           <p>Reset all settings to their default values.</p>
@@ -311,6 +457,11 @@ export default {
       lightOnTime: 0,
       lightOffTime: 0,
       mdnsName: '',
+      pGain: 0,
+      iGain: 0,
+      dGain: 0,
+      iMin: 0,
+      iMax: 0,
 
       wifiSSID: '',
       wifiPassword: '',
@@ -350,6 +501,26 @@ export default {
         minLength: minLength(8),
         maxLength: maxLength(63),
       },
+      pGain: {
+        numeric,
+        minValue: minValue(0),
+      },
+      iGain: {
+        numeric,
+        minValue: minValue(0),
+      },
+      dGain: {
+        numeric,
+        minValue: minValue(0),
+      },
+      iMin: {
+        numeric,
+        minValue: minValue(0),
+      },
+      iMax: {
+        numeric,
+        minValue: minValue(0),
+      },
     };
   },
   methods: {
@@ -364,6 +535,11 @@ export default {
           this.lightOffTime = response.data.lightOffTime;
           this.wifiSSID = response.data.wifiSSID;
           this.mdnsName = response.data.mdnsName;
+          this.pGain = response.data.pGain;
+          this.iGain = response.data.iGain;
+          this.dGain = response.data.dGain;
+          this.iMin = response.data.iMin;
+          this.iMax = response.data.iMax;
           this.scanResults = [response.data.wifiSSID];
         })
         .catch((error) => {
@@ -405,6 +581,21 @@ export default {
       }
       if (this.mdnsName !== this.originalSettings.mdnsName) {
         changedSettings.mdnsName = this.mdnsName;
+      }
+      if (this.pGain !== this.originalSettings.pGain) {
+        changedSettings.pGain = this.pGain;
+      }
+      if (this.iGain !== this.originalSettings.iGain) {
+        changedSettings.iGain = this.iGain;
+      }
+      if (this.dGain !== this.originalSettings.dGain) {
+        changedSettings.dGain = this.dGain;
+      }
+      if (this.iMin !== this.originalSettings.iMin) {
+        changedSettings.iMin = this.iMin;
+      }
+      if (this.iMax !== this.originalSettings.iMax) {
+        changedSettings.iMax = this.iMax;
       }
 
       if (this.wifiSSID !== this.originalSettings.wifiSSID) {
