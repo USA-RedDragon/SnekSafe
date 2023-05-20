@@ -52,6 +52,9 @@ void setup() {
   pinMode(HEATER_PIN, OUTPUT);
   pinMode(LIGHT_PIN, OUTPUT);
 
+  // Turn the heater off during boot for safety
+  digitalWrite(HEATER_PIN, LOW);
+
   Serial.begin(9600);
 #ifdef DEV
   Serial.setDebugOutput(true);
@@ -74,6 +77,9 @@ void setup() {
   }
 
   sht31_setup();
+
+  // We don't accidentally want to start with the heater on
+  sht31_set_heater(false);
 
   captivePortal.setup(&settings);
 
