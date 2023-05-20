@@ -50,6 +50,8 @@ import Card from 'primevue/card';
 import Chart from 'primevue/chart';
 import InputSwitch from 'primevue/inputswitch';
 
+import moment from 'moment';
+
 import API from '@/services/API';
 
 export default {
@@ -84,11 +86,11 @@ export default {
       heat: false,
       light: false,
       historyTemperature: [],
+      historyTemperatureTimes: [],
       historyHumidity: [],
+      historyHumidityTimes: [],
       chartOptions: {
         stacked: false,
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
         plugins: {
           legend: {
             labels: {
@@ -151,9 +153,11 @@ export default {
     },
     getTemperatureHistory() {
       this.historyTemperature = [80, 81, 80, 83, 82, 81];
+      this.historyTemperatureTimes = [moment.unix(1627776000).format('hh:mm:ss'), moment.unix(1627776060).format('hh:mm:ss'), moment.unix(1627776120).format('hh:mm:ss'), moment.unix(1627776180).format('hh:mm:ss'), moment.unix(1627776240).format('hh:mm:ss'), moment.unix(1627776300).format('hh:mm:ss')];
     },
     getHumidityHistory() {
       this.historyHumidity = [51, 50, 49, 48, 47, 46];
+      this.historyHumidityTimes = [moment.unix(1627776000).format('hh:mm:ss'), moment.unix(1627776060).format('hh:mm:ss'), moment.unix(1627776120).format('hh:mm:ss'), moment.unix(1627776180).format('hh:mm:ss'), moment.unix(1627776240).format('hh:mm:ss'), moment.unix(1627776300).format('hh:mm:ss')];
     },
     getState() {
       API.get('/state')
@@ -179,7 +183,7 @@ export default {
     temperatureChartData() {
       const documentStyle = getComputedStyle(document.documentElement);
       return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        labels: this.historyTemperatureTimes,
         datasets: [
           {
             label: 'Temperature',
@@ -195,7 +199,7 @@ export default {
     humidityChartData() {
       const documentStyle = getComputedStyle(document.documentElement);
       return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        labels: this.historyHumidityTimes,
         datasets: [
           {
             label: 'Humidity',
