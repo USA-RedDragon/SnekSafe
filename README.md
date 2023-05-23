@@ -2,9 +2,9 @@
 
 Keep your snek safe by controlling temperature and lighting.
 
-## Assembled v1.2 Board
+## Assembled v1.1 Board
 
-![v1.2 assembled](pics/board-assembled.jpg)
+![v1.1 assembled](pics/board-assembled.jpg)
 
 ## Board Renders
 
