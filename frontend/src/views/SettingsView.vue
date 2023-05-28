@@ -257,7 +257,7 @@
                 'p-invalid': v$.pGain.$invalid && submitted,
                 'w-full': true,
               }" />
-            <Slider v-model="v$.pGain.$model" :min="0" :max="100"
+            <Slider v-model="v$.pGain.$model" :min="0" :max="100" :step="0.25"
               :class="{
                 'p-invalid': v$.pGain.$invalid && submitted,
               }" />
@@ -282,7 +282,7 @@
                 'p-invalid': v$.iGain.$invalid && submitted,
                 'w-full': true,
               }" />
-            <Slider v-model="v$.iGain.$model" :min="0" :max="100"
+            <Slider v-model="v$.iGain.$model" :min="0" :max="100" :step="0.25"
               :class="{
                 'p-invalid': v$.iGain.$invalid && submitted,
               }" />
@@ -307,7 +307,7 @@
                 'p-invalid': v$.dGain.$invalid && submitted,
                 'w-full': true,
               }" />
-            <Slider v-model="v$.dGain.$model" :min="0" :max="100"
+            <Slider v-model="v$.dGain.$model" :min="0" :max="100" :step="0.25"
               :class="{
                 'p-invalid': v$.dGain.$invalid && submitted,
               }" />
@@ -332,7 +332,7 @@
                 'p-invalid': v$.iMin.$invalid && submitted,
                 'w-full': true,
               }" />
-            <Slider v-model="v$.iMin.$model" :min="0" :max="100"
+            <Slider v-model="v$.iMin.$model" :min="0" :max="100" :step="0.25"
               :class="{
                 'p-invalid': v$.iMin.$invalid && submitted,
               }" />
@@ -357,7 +357,7 @@
                 'p-invalid': v$.iMax.$invalid && submitted,
                 'w-full': true,
               }" />
-            <Slider v-model="v$.iMax.$model" :min="0" :max="100"
+            <Slider v-model="v$.iMax.$model" :min="0" :max="100" :step="0.25"
               :class="{
                 'p-invalid': v$.iMax.$invalid && submitted,
               }" />
