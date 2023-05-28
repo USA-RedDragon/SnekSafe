@@ -232,20 +232,20 @@ void loop() {
         pidController.debug();
         Serial.println("");
       }
+      DynamicJsonDocument doc(1024);
+      doc["temperature"] = temperature;
+      doc["lastUpdate"] = lastUpdate;
+      doc["heat"] = heaterPulseWidth > 0;
+      doc["light"] = lightState;
+      doc["heaterPulseWidth"] = heaterPulseWidth;
+      doc["temperatureSetpoint"] = settings.temperatureSetpoint;
+      String json;
+      serializeJson(doc, json);
+      events.send(json.c_str(), "state", millis());
+      sht31_set_heater(prevHeat);
     } else {
       Serial.println("Failed to read temperature in 3s loop");
     }
-    DynamicJsonDocument doc(1024);
-    doc["temperature"] = temperature;
-    doc["lastUpdate"] = lastUpdate;
-    doc["heat"] = heaterPulseWidth > 0;
-    doc["light"] = lightState;
-    doc["heaterPulseWidth"] = heaterPulseWidth;
-    doc["temperatureSetpoint"] = settings.temperatureSetpoint;
-    String json;
-    serializeJson(doc, json);
-    events.send(json.c_str(), "state", millis());
-    sht31_set_heater(prevHeat);
   }
 
   // Humidity readings are only updated every 10 seconds
