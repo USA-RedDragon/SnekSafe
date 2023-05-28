@@ -50,7 +50,6 @@ PID pidController = PID(
 
 FireTimer timer3s;
 FireTimer timer10s;
-FireTimer timer30s;
 FireTimer timer1m;
 FireTimer timer10ms;
 
@@ -130,7 +129,6 @@ void setup() {
 
   timer3s.begin(1000 * 3);
   timer10s.begin(1000 * 10);
-  timer30s.begin(1000 * 30);
   timer1m.begin(1000 * 60);
   // 100Hz PWM
   timer10ms.begin(10);
@@ -251,11 +249,6 @@ void loop() {
       Serial.println("Failed to read humidity in 10s loop");
     }
     sht31_set_heater(prevHeat);
-  }
-
-  // Call pidController.compute() every 30 seconds,
-  // which updates the heaterPulseWidth value.
-  if(timer30s.fire()) {
     pidController.compute();
     Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
     pidController.debug();
