@@ -20,11 +20,11 @@
           <br />
           <font-awesome-icon icon="fa-regular fa-lightbulb" style="padding-right: 0.5em;"/>
           <label for="light">Light</label>
-          <InputSwitch v-model="light" inputId="light" style="margin-left: 1em; margin-top: -1em;" />
+          <InputSwitch v-model="light" inputId="light" style="margin-left: 1em; margin-top: -1em;" @change="toggleLight" />
           <br />
           <font-awesome-icon icon="fa-solid fa-fire-flame-curved" style="padding-right: 0.5em;"/>
           <label for="heat">Heat</label>
-          <InputSwitch v-model="heat" inputId="heat" style="margin-left: 1em; margin-top: -1em;" />
+          <InputSwitch v-model="heat" inputId="heat" style="margin-left: 1em; margin-top: -1em;" @change="toggleHeat" />
         </template>
       </Card>
     </div>
@@ -137,6 +137,28 @@ export default {
     };
   },
   methods: {
+    toggleHeat() {
+      API.post('/toggle/heat', { heat: this.heat })
+        .then((response) => {
+          if (response.data && response.data.status != 'error') {
+            this.heat = response.data.status == 'on';
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    toggleLight() {
+      API.post('/toggle/light', { light: this.light })
+        .then((response) => {
+          if (response.data && response.data.status != 'error') {
+            this.light = response.data.status == 'on';
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getConnectionStatus() {
       API.get('/wifi/status')
         .then((response) => {

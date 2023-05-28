@@ -3,7 +3,6 @@
 
 #include <ESP32Time.h>
 
-extern bool heatState;
 extern bool lightState;
 extern bool wifi_changed;
 extern ESP32Time rtc;

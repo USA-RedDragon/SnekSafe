@@ -25,9 +25,37 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         doc["temperature"] = temperature;
         doc["humidity"] = humidity;
         doc["lastUpdate"] = lastUpdate;
-        doc["heat"] = heatState;
+        doc["heat"] = heaterPulseWidth > 0;
         doc["light"] = lightState;
         doc["heaterPulseWidth"] = heaterPulseWidth;
+
+        response->setLength();
+        request->send(response);
+    });
+
+    server->on("/api/v1/toggle/light", HTTP_POST, [] (AsyncWebServerRequest *request) {
+        AsyncJsonResponse* response = new AsyncJsonResponse();
+        const JsonObject& doc = response->getRoot();
+
+        lightState = !lightState;
+
+        doc["status"] = lightState ? "on" : "off";
+
+        response->setLength();
+        request->send(response);
+    });
+
+    server->on("/api/v1/toggle/heat", HTTP_POST, [] (AsyncWebServerRequest *request) {
+        AsyncJsonResponse* response = new AsyncJsonResponse();
+        const JsonObject& doc = response->getRoot();
+
+        if (heaterPulseWidth > 0) {
+            heaterPulseWidth = 0;
+        } else {
+            heaterPulseWidth = 255;
+        }
+
+        doc["status"] = heaterPulseWidth > 0 ? "on" : "off";
 
         response->setLength();
         request->send(response);

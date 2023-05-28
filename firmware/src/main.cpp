@@ -23,7 +23,6 @@ const int HEATER_PIN = 18;
 const int LIGHT_PIN = 19;
 
 // Program-wide globals
-bool heatState = false;
 bool lightState = false;
 unsigned long lastUpdate = 0;
 bool wifi_changed = false;
@@ -53,6 +52,7 @@ FireTimer timer3s;
 FireTimer timer10s;
 FireTimer timer30s;
 FireTimer timer1m;
+FireTimer timer10ms;
 
 void setup() {
   pinMode(HEATER_PIN, OUTPUT);
@@ -109,6 +109,8 @@ void setup() {
   timer10s.begin(1000 * 10);
   timer30s.begin(1000 * 30);
   timer1m.begin(1000 * 60);
+  // 100Hz PWM
+  timer10ms.begin(10);
 
   // Check time, see if light should be on
 }
@@ -123,6 +125,13 @@ void loop() {
     wifi_connect(&settings);
   }
 
+  if (timer10ms.fire()) {
+    // Update the light state every 10ms
+    analogWrite(HEATER_PIN, heaterPulseWidth);
+  }
+
+  digitalWrite(LIGHT_PIN, lightState);
+
   // Collect temp readings every 3 seconds
   if(timer3s.fire()) {
     bool prevHeat = sht31_get_heater();
@@ -135,6 +144,10 @@ void loop() {
       if (!pidController.isStarted()) {
         Serial.println("Starting PID controller");
         pidController.begin();
+        pidController.compute();
+        Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
+        pidController.debug();
+        Serial.println("");
       }
     } else {
       Serial.println("Failed to read temperature in 3s loop");
@@ -159,8 +172,7 @@ void loop() {
   // which updates the heaterPulseWidth value.
   if(timer30s.fire()) {
     pidController.compute();
-    heatState = heaterPulseWidth > 0;
-    Serial.println("");
+    Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
     pidController.debug();
     Serial.println("");
   }
