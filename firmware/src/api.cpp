@@ -20,7 +20,7 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         request->send(200, "text/plain", commitHash);
     });
 
-    server->on("/api/v1/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    server->on("/api/v1/state", HTTP_GET, [settings] (AsyncWebServerRequest *request) {
         AsyncJsonResponse* response = new AsyncJsonResponse();
         const JsonObject& doc = response->getRoot();
 
@@ -30,6 +30,7 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         doc["heat"] = heaterPulseWidth > 0;
         doc["light"] = lightState;
         doc["heaterPulseWidth"] = heaterPulseWidth;
+        doc["temperatureSetpoint"] = settings->temperatureSetpoint;
 
         response->setLength();
         request->send(response);

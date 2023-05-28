@@ -222,6 +222,7 @@ void loop() {
     doc["heat"] = heaterPulseWidth > 0;
     doc["light"] = lightState;
     doc["heaterPulseWidth"] = heaterPulseWidth;
+    doc["temperatureSetpoint"] = settings.temperatureSetpoint;
     String json;
     serializeJson(doc, json);
     events.send(json.c_str(), "state", millis());
@@ -241,6 +242,7 @@ void loop() {
       doc["heat"] = heaterPulseWidth > 0;
       doc["light"] = lightState;
       doc["heaterPulseWidth"] = heaterPulseWidth;
+      doc["temperatureSetpoint"] = settings.temperatureSetpoint;
       String json;
       serializeJson(doc, json);
       events.send(json.c_str(), "state", millis());
