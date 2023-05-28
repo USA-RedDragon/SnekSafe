@@ -21,6 +21,7 @@
 
 const int HEATER_PIN = 18;
 const int LIGHT_PIN = 19;
+const int BOOT0_PIN = 0;
 
 // Program-wide globals
 bool lightState = false;
@@ -57,6 +58,7 @@ FireTimer timer10ms;
 void setup() {
   pinMode(HEATER_PIN, OUTPUT);
   pinMode(LIGHT_PIN, OUTPUT);
+  pinMode(BOOT0_PIN, INPUT_PULLUP);
 
   // Turn the heater off during boot for safety
   digitalWrite(HEATER_PIN, LOW);
@@ -103,6 +105,22 @@ void setup() {
 
   if (!wifi_connect(&settings)) {
     Serial.println("Wifi not connected.");
+  } else {
+    // Only update the light if we have a valid time after 1/1/2023
+    if (rtc.getEpoch() > 1672531200) {
+      if (rtc.getMinute() >= settings.lightOnMinute && rtc.getHour(true) >= settings.lightOnHour
+        && rtc.getMinute() <= settings.lightOffMinute && rtc.getHour(true) <= settings.lightOffHour) {
+        // If we haven't already turned the light on during this minute, turn it on
+        if (!lightState) {
+          lightState = true;
+        }
+      } else {
+        // If we haven't already turned the light off during this minute, turn it off
+        if (lightState) {
+          lightState = false;
+        }
+      }
+    }
   }
 
   timer3s.begin(1000 * 3);
@@ -126,6 +144,14 @@ void loop() {
   }
 
   if (timer10ms.fire()) {
+    if (digitalRead(BOOT0_PIN) == LOW) {
+      // If the user is holding down the BOOT0 button, reset the settings to defaults
+      Serial.println("Resetting settings to defaults");
+      settings_t default_settings2;
+      default_settings2 = default_settings;
+      settings_write(&default_settings2);
+      ESP.restart();
+    }
     // Update the light state every 10ms
     analogWrite(HEATER_PIN, heaterPulseWidth);
   }
