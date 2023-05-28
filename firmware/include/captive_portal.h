@@ -16,6 +16,7 @@ public:
     CaptivePortal(AsyncWebServer* webServer);
     void setup(settings_t* settings);
     void loop();
+    void end();
 private:
     AsyncWebServer* webServer;
     DNSServer* dnsServer;

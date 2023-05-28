@@ -84,3 +84,7 @@ void CaptivePortal::setupKnownEndpoints() {
         });
     }
 }
+
+void CaptivePortal::end() {
+    dnsServer->stop();
+}

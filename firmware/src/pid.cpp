@@ -67,3 +67,10 @@ void PID::setIMax(double iMax) {
     this->pidController.setWindUpLimits(*this->iMin, iMax);
     *(this->iMax) = iMax;
 }
+
+void PID::end() {
+    this->pidController.stop();
+    // Set the output to 0 to prevent the heater from turning on
+    *(this->output) = 0;
+    this->started = false;
+}

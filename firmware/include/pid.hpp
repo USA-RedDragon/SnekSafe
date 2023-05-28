@@ -22,6 +22,7 @@ public:
     void compute();
     void setIMin(double iMin);
     void setIMax(double iMax);
+    void end();
 
 private:
     double* pGain;
