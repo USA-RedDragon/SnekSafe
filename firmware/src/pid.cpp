@@ -25,6 +25,9 @@ PID::PID(
 }
 
 void PID::debug() {
+    if (!this->started) {
+        return;
+    }
     this->pidController
         .debug(&Serial, "PID",  PRINT_INPUT    |
                                 PRINT_OUTPUT   |
@@ -55,6 +58,9 @@ bool PID::isStarted() {
 }
 
 void PID::compute() {
+    if (!this->started) {
+        return;
+    }
     this->pidController.compute();
 }
 
