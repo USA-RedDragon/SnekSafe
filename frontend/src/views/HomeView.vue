@@ -196,6 +196,7 @@ export default {
       source.addEventListener('state', (e) => {
         const state = JSON.parse(e.data);
         if ('temperature' in state) {
+          this.temperature = state.temperature.toFixed(2);
           if (this.historyTemperature.length > 1000) {
             this.$refs.tempChart.chart.data.labels = this.$refs.tempChart.chart.data.labels.slice(1);
             this.$refs.tempChart.chart.data.datasets[0].data =
@@ -208,6 +209,7 @@ export default {
           this.$refs.tempChart.chart.update();
         }
         if ('humidity' in state) {
+          this.humidity = state.humidity.toFixed(2);
           if (this.historyHumidity.length > 1000) {
             this.$refs.humidityChart.chart.data.labels = this.$refs.humidityChart.chart.data.labels.slice(1);
             this.$refs.humidityChart.chart.data.datasets[0].data =
