@@ -21,6 +21,11 @@ Keep your snek safe by controlling temperature and lighting.
 
 [![Board Layout](pics/sneksafe-board.png)](pdfs/board.pdf)
 
+## Site Images
+
+![Home](pics/sneksafe-site-home.png)
+![Settings](pics/sneksafe-site-settings.png)
+
 ## Parts not in the BOM
 
 - 14AWG Silicone Wire - https://www.amazon.com/dp/B089CRKSNN
