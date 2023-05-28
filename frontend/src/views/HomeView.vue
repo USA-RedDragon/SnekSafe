@@ -68,40 +68,7 @@ export default {
     this.getState();
 
     if (window.EventSource) {
-      let url = '/events';
-      if (window.location.port == 5173) {
-        url = 'http://snek.local/events';
-      }
-
-      const source = new EventSource(url);
-
-      source.addEventListener('open', (_e) => {
-        console.log('Events Connected');
-      }, false);
-
-      source.addEventListener('error', (e) => {
-        if (e.target.readyState != EventSource.OPEN) {
-          console.log('Events Disconnected');
-        }
-      }, false);
-
-      source.addEventListener('state', (e) => {
-        const state = JSON.parse(e.data);
-        if ('temperature' in state) {
-          this.historyTemperature = [...this.historyTemperature, state.temperature];
-          this.historyTemperatureTimes =
-            [...this.historyTemperatureTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
-        }
-        if ('humidity' in state) {
-          this.historyHumidity = [...this.historyHumidity, state.humidity];
-          this.historyHumidityTimes =
-            [...this.historyHumidityTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
-        }
-        this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
-        this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
-        this.heat = state.heat;
-        this.light = state.light;
-      }, false);
+      this.setupEvents();
     } else {
       console.log('Events Not Supported');
     }
@@ -129,6 +96,7 @@ export default {
       historyTemperatureTimes: [],
       historyHumidity: [],
       historyHumidityTimes: [],
+      expoBackoff: 0,
       humidityChartOptions: {
         animation: {
           duration: 0,
@@ -201,6 +169,46 @@ export default {
     };
   },
   methods: {
+    setupEvents() {
+      let url = '/events';
+      if (window.location.port == 5173) {
+        url = 'http://snek.local/events';
+      }
+
+      const source = new EventSource(url);
+
+      source.addEventListener('open', (_e) => {
+        console.log('Events Connected');
+      }, false);
+
+      source.addEventListener('error', (e) => {
+        if (e.target.readyState != EventSource.OPEN) {
+          // Reconnect with exponential backoff
+          setTimeout(() => {
+            this.expoBackoff = this.expoBackoff + 1;
+            this.setupEvents();
+          }, Math.pow(2, this.expoBackoff) * 1000);
+        }
+      }, false);
+
+      source.addEventListener('state', (e) => {
+        const state = JSON.parse(e.data);
+        if ('temperature' in state) {
+          this.historyTemperature = [...this.historyTemperature, state.temperature];
+          this.historyTemperatureTimes =
+            [...this.historyTemperatureTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+        }
+        if ('humidity' in state) {
+          this.historyHumidity = [...this.historyHumidity, state.humidity];
+          this.historyHumidityTimes =
+            [...this.historyHumidityTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+        }
+        this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
+        this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
+        this.heat = state.heat;
+        this.light = state.light;
+      }, false);
+    },
     toggleHeat() {
       API.post('/toggle/heat', { heat: this.heat })
         .then((response) => {
