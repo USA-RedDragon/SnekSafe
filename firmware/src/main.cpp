@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <FireTimer.h>
@@ -31,6 +32,7 @@ double heaterPulseWidth = 0;
 // File globals
 settings_t settings;
 AsyncWebServer server(80);
+AsyncEventSource events("/events");
 CaptivePortal captivePortal(&server);
 float stagedHumidity = 0;
 float stagedTemperature = 0;
@@ -90,6 +92,13 @@ void setup() {
   api_setup(&server, &settings);
 
   frontend_setup(&server);
+
+  events.onConnect([](AsyncEventSourceClient *client){
+    if(client->lastId()){
+      Serial.printf("Client reconnected! Last message ID that it gat is: %u\n", client->lastId());
+    }
+  });
+  server.addHandler(&events);
 
 #ifdef DEV
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
@@ -207,6 +216,15 @@ void loop() {
     } else {
       Serial.println("Failed to read temperature in 3s loop");
     }
+    DynamicJsonDocument doc(1024);
+    doc["temperature"] = temperature;
+    doc["lastUpdate"] = lastUpdate;
+    doc["heat"] = heaterPulseWidth > 0;
+    doc["light"] = lightState;
+    doc["heaterPulseWidth"] = heaterPulseWidth;
+    String json;
+    serializeJson(doc, json);
+    events.send(json.c_str(), "state", millis());
     sht31_set_heater(prevHeat);
   }
 
@@ -217,6 +235,16 @@ void loop() {
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
       humidity = stagedHumidity;
       Serial.print("Hum. % = "); Serial.println(humidity);
+      DynamicJsonDocument doc();
+      doc["humidity"] = humidity;
+      doc["lastUpdate"] = lastUpdate;
+      doc["heat"] = heaterPulseWidth > 0;
+      doc["light"] = lightState;
+      doc["heaterPulseWidth"] = heaterPulseWidth;
+      String json;
+      serializeJson(doc, json);
+      events.send(json.c_str(), "state", millis());
+      sht31_set_heater(prevHeat);
     } else {
       Serial.println("Failed to read humidity in 10s loop");
     }

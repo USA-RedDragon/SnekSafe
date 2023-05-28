@@ -1,6 +1,7 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
+#include <ESPAsyncWebServer.h>
 #include <ESP32Time.h>
 
 extern bool lightState;
@@ -14,5 +15,7 @@ extern double heaterPulseWidth;
 const int HEATER_PIN = 18;
 const int LIGHT_PIN = 19;
 const int BOOT0_PIN = 0;
+
+extern AsyncEventSource events;
 
 #endif

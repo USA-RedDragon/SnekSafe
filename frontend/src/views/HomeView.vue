@@ -65,6 +65,45 @@ export default {
     this.getTemperatureHistory();
     this.getHumidityHistory();
     this.getState();
+
+    if (window.EventSource) {
+      let url = '/events';
+      if (window.location.port == 5173) {
+        url = 'http://snek.local/events';
+      }
+
+      const source = new EventSource(url);
+
+      source.addEventListener('open', (_e) => {
+        console.log('Events Connected');
+      }, false);
+
+      source.addEventListener('error', (e) => {
+        if (e.target.readyState != EventSource.OPEN) {
+          console.log('Events Disconnected');
+        }
+      }, false);
+
+      source.addEventListener('state', (e) => {
+        const state = JSON.parse(e.data);
+        if ('temperature' in state) {
+          this.historyTemperature = [...this.historyTemperature, state.temperature];
+          this.historyTemperatureTimes =
+            [...this.historyTemperatureTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+        }
+        if ('humidity' in state) {
+          this.historyHumidity = [...this.historyHumidity, state.humidity];
+          this.historyHumidityTimes =
+            [...this.historyHumidityTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+        }
+        this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
+        this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
+        this.heat = state.heat;
+        this.light = state.light;
+      }, false);
+    } else {
+      console.log('Events Not Supported');
+    }
   },
   mounted() {},
   unmounted() {},
@@ -89,8 +128,10 @@ export default {
       historyTemperatureTimes: [],
       historyHumidity: [],
       historyHumidityTimes: [],
-      chartOptions: {
-        stacked: false,
+      humidityChartOptions: {
+        animation: {
+          duration: 0,
+        },
         plugins: {
           legend: {
             labels: {
@@ -120,15 +161,37 @@ export default {
               color: surfaceBorder,
             },
           },
-          temperature: {
-            type: 'linear',
-            display: true,
-            position: 'right',
+        },
+      },
+      temperatureChartOptions: {
+        animation: {
+          duration: 0,
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: textColor,
+            },
+          },
+        },
+        scales: {
+          x: {
             ticks: {
               color: textColorSecondary,
             },
             grid: {
-              drawOnChartArea: false,
+              color: surfaceBorder,
+            },
+          },
+          temperature: {
+            display: true,
+            position: 'left',
+            min: 60,
+            max: 90,
+            ticks: {
+              color: textColorSecondary,
+            },
+            grid: {
               color: surfaceBorder,
             },
           },
@@ -174,12 +237,12 @@ export default {
         });
     },
     getTemperatureHistory() {
-      this.historyTemperature = [80, 81, 80, 83, 82, 81];
-      this.historyTemperatureTimes = [moment.unix(1627776000).format('hh:mm:ss'), moment.unix(1627776060).format('hh:mm:ss'), moment.unix(1627776120).format('hh:mm:ss'), moment.unix(1627776180).format('hh:mm:ss'), moment.unix(1627776240).format('hh:mm:ss'), moment.unix(1627776300).format('hh:mm:ss')];
+      this.historyTemperature = [];
+      this.historyTemperatureTimes = [];
     },
     getHumidityHistory() {
-      this.historyHumidity = [51, 50, 49, 48, 47, 46];
-      this.historyHumidityTimes = [moment.unix(1627776000).format('hh:mm:ss'), moment.unix(1627776060).format('hh:mm:ss'), moment.unix(1627776120).format('hh:mm:ss'), moment.unix(1627776180).format('hh:mm:ss'), moment.unix(1627776240).format('hh:mm:ss'), moment.unix(1627776300).format('hh:mm:ss')];
+      this.historyHumidity = [];
+      this.historyHumidityTimes = [];
     },
     getState() {
       API.get('/state')
