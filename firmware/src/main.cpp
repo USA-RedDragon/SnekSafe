@@ -129,8 +129,6 @@ void setup() {
   timer1m.begin(1000 * 60);
   // 100Hz PWM
   timer10ms.begin(10);
-
-  // Check time, see if light should be on
 }
 
 void loop() {
@@ -140,7 +138,23 @@ void loop() {
 
   if (wifi_changed) {
     wifi_changed = false;
-    wifi_connect(&settings);
+    if (wifi_connect(&settings)) {
+      // Only update the light if we have a valid time after 1/1/2023
+      if (rtc.getEpoch() > 1672531200) {
+        if (rtc.getMinute() >= settings.lightOnMinute && rtc.getHour(true) >= settings.lightOnHour
+          && rtc.getMinute() <= settings.lightOffMinute && rtc.getHour(true) <= settings.lightOffHour) {
+          // If we haven't already turned the light on during this minute, turn it on
+          if (!lightState) {
+            lightState = true;
+          }
+        } else {
+          // If we haven't already turned the light off during this minute, turn it off
+          if (lightState) {
+            lightState = false;
+          }
+        }
+      }
+    }
   }
 
   if (timer10ms.fire()) {
@@ -154,6 +168,25 @@ void loop() {
     }
     // Update the light state every 10ms
     analogWrite(HEATER_PIN, heaterPulseWidth);
+  }
+
+  // Only update the light if we have a valid time after 1/1/2023
+  if (rtc.getEpoch() > 1672531200) {
+    if (rtc.getMinute() == settings.lightOnMinute && rtc.getHour(true) == settings.lightOnHour) {
+    // If we haven't already turned the light on during this minute, turn it on
+      if (!lightState) {
+        lightState = true;
+        Serial.println("Light On");
+      }
+    }
+
+    if (rtc.getMinute() == settings.lightOffMinute && rtc.getHour(true) == settings.lightOffHour) {
+      // If we haven't already turned the light off during this minute, turn it off
+      if (lightState) {
+        lightState = false;
+        Serial.println("Light Off");
+      }
+    }
   }
 
   digitalWrite(LIGHT_PIN, lightState);

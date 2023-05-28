@@ -22,8 +22,10 @@ typedef struct
     char captivePortalPassword[63+1]; // 63 chars + null terminator
     uint8_t captivePortalChannel; // 1-13, wifi channel
     double temperatureSetpoint; // temperature setpoint in degrees F
-    time_t lightOnTime; // time_t, time of day to turn on light
-    time_t lightOffTime; // time_t, time of day to turn off light
+    uint8_t lightOnHour; // 0-23, hour of day to turn on light
+    uint8_t lightOnMinute; // 0-59, time of day to turn on light
+    uint8_t lightOffHour; // 0-23, hour of day to turn off light
+    uint8_t lightOffMinute; // 0-59, time of day to turn off light
     char wifiSSID[32+1]; // 32 chars + null terminator
     char wifiPassword[63+1]; // 63 chars + null terminator
     char mdnsName[32+1]; // 32 chars + null terminator
@@ -43,8 +45,10 @@ const settings_t default_settings =
     "", // captivePortalPassword
     6, // captivePortalChannel
     82, // temperatureSetpoint
-    0, // lightOnTime
-    0, // lightOffTime
+    11, // lightOnHour
+    0, // lightOnMinute
+    21, // lightOffHour
+    0, // lightOffMinute
     "", // wifiSSID
     "", // wifiPassword
     "snek", // mdnsName,

@@ -12,8 +12,10 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         doc["captivePortalSSID"] = settings->captivePortalSSID;
         doc["captivePortalChannel"] = settings->captivePortalChannel;
         doc["temperatureSetpoint"] = settings->temperatureSetpoint;
-        doc["lightOnTime"] = settings->lightOnTime;
-        doc["lightOffTime"] = settings->lightOffTime;
+        doc["lightOnHour"] = settings->lightOnHour;
+        doc["lightOnMinute"] = settings->lightOnMinute;
+        doc["lightOffHour"] = settings->lightOffHour;
+        doc["lightOffMinute"] = settings->lightOffMinute;
         doc["wifiSSID"] = settings->wifiSSID;
         doc["mdnsName"] = settings->mdnsName;
         doc["pGain"] = settings->pGain;
@@ -33,8 +35,10 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         strncpy(settings->captivePortalPassword, default_settings.captivePortalPassword, sizeof(settings->captivePortalPassword));
         settings->captivePortalChannel = default_settings.captivePortalChannel;
         settings->temperatureSetpoint = default_settings.temperatureSetpoint;
-        settings->lightOnTime = default_settings.lightOnTime;
-        settings->lightOffTime = default_settings.lightOffTime;
+        settings->lightOnHour = default_settings.lightOnHour;
+        settings->lightOnMinute = default_settings.lightOnMinute;
+        settings->lightOffHour = default_settings.lightOffHour;
+        settings->lightOffMinute = default_settings.lightOffMinute;
         strncpy(settings->wifiSSID, default_settings.wifiSSID, sizeof(settings->wifiSSID));
         strncpy(settings->wifiPassword, default_settings.wifiPassword, sizeof(settings->wifiPassword));
         strncpy(settings->mdnsName, default_settings.mdnsName, sizeof(settings->mdnsName));
@@ -120,30 +124,56 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             settings->temperatureSetpoint = temperatureSetpoint;
         }
 
-        if (body.containsKey("lightOnTime")) {
-            int lightOnTime = body["lightOnTime"];
-            if (lightOnTime < 0) {
+        if (body.containsKey("lightOnHour")) {
+            int lightOnHour = body["lightOnHour"];
+            if (lightOnHour < 0) {
                 root["status"] = "error";
-                root["message"] = "lightOnTime out of range";
+                root["message"] = "lightOnHour out of range";
                 response->setCode(400);
                 response->setLength();
                 request->send(response);
                 return;
             }
-            settings->lightOnTime = lightOnTime;
+            settings->lightOnHour = lightOnHour;
         }
 
-        if (body.containsKey("lightOffTime")) {
-            int lightOffTime = body["lightOffTime"];
-            if (lightOffTime < 0) {
+        if (body.containsKey("lightOffHour")) {
+            int lightOffHour = body["lightOffHour"];
+            if (lightOffHour < 0) {
                 root["status"] = "error";
-                root["message"] = "lightOffTime out of range";
+                root["message"] = "lightOffHour out of range";
                 response->setCode(400);
                 response->setLength();
                 request->send(response);
                 return;
             }
-            settings->lightOffTime = lightOffTime;
+            settings->lightOffHour = lightOffHour;
+        }
+
+        if (body.containsKey("lightOffHour")) {
+            int lightOffHour = body["lightOffHour"];
+            if (lightOffHour < 0) {
+                root["status"] = "error";
+                root["message"] = "lightOffHour out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->lightOffHour = lightOffHour;
+        }
+
+        if (body.containsKey("lightOffMinute")) {
+            int lightOffMinute = body["lightOffMinute"];
+            if (lightOffMinute < 0) {
+                root["status"] = "error";
+                root["message"] = "lightOffMinute out of range";
+                response->setCode(400);
+                response->setLength();
+                request->send(response);
+                return;
+            }
+            settings->lightOffMinute = lightOffMinute;
         }
 
         if (body.containsKey("captivePortalPassword")) {
@@ -338,6 +368,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         response->setLength();
         request->send(response);
+        ESP.restart();
     });
     server->addHandler(handler);
 }
