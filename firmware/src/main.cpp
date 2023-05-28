@@ -67,12 +67,9 @@ void setup() {
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
 
+  Serial.printf("SnekSafe v1.0.0-%s\n", GIT_COMMIT);
+
   prefs.begin("settings");
-
-  // settings_t default_settings2;
-  // default_settings2 = default_settings;
-
-  // settings_write(&default_settings2);
   settings_read(&settings);
 
   if (!LittleFS.begin()){
