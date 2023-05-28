@@ -285,12 +285,36 @@ export default {
         });
     },
     getTemperatureHistory() {
-      this.historyTemperature = [];
-      this.historyTemperatureTimes = [];
+      API.get('/history/temperature')
+        .then((response) => {
+          if (response.data && response.data.status != 'error') {
+            this.historyTemperature = response.data.data;
+            const times = [];
+            for (let i = 0; i < response.data.timestamps.length; i++) {
+              times.push(moment.unix(response.data.timestamps[i]).format('hh:mm:ss'));
+            }
+            this.historyTemperatureTimes = times;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     getHumidityHistory() {
-      this.historyHumidity = [];
-      this.historyHumidityTimes = [];
+      API.get('/history/humidity')
+        .then((response) => {
+          if (response.data && response.data.status != 'error') {
+            this.historyHumidity = response.data.data;
+            const times = [];
+            for (let i = 0; i < response.data.timestamps.length; i++) {
+              times.push(moment.unix(response.data.timestamps[i]).format('hh:mm:ss'));
+            }
+            this.historyHumidityTimes = times;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     getState() {
       API.get('/state')
