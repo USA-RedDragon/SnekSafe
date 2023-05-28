@@ -19,10 +19,6 @@
 #include "sht31.h"
 #include "wifi.h"
 
-const int HEATER_PIN = 18;
-const int LIGHT_PIN = 19;
-const int BOOT0_PIN = 0;
-
 // Program-wide globals
 bool lightState = false;
 unsigned long lastUpdate = 0;

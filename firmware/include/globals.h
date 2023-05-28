@@ -11,4 +11,8 @@ extern float humidity;
 extern unsigned long lastUpdate;
 extern double heaterPulseWidth;
 
+const int HEATER_PIN = 18;
+const int LIGHT_PIN = 19;
+const int BOOT0_PIN = 0;
+
 #endif
