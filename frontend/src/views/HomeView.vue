@@ -242,7 +242,7 @@ export default {
         }
 
         this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
-        this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
+        this.heaterPulseWidth = ((state.heaterPulseWidth / 255) * 100).toFixed(2);
         this.temperatureSetpoint = state.temperatureSetpoint;
         this.heat = state.heat;
         this.light = state.light;
@@ -329,7 +329,7 @@ export default {
             this.temperatureChartOptions.plugins.annotation.annotations.line1.yMin = this.temperatureSetpoint;
             this.temperatureChartOptions.plugins.annotation.annotations.line1.yMax = this.temperatureSetpoint;
             // heaterPulseWidth is between 0 and 255, but we want to display it as a percentage
-            this.heaterPulseWidth = Math.round((response.data.heaterPulseWidth / 255) * 100);
+            this.heaterPulseWidth = ((response.data.heaterPulseWidth / 255) * 100).toFixed(2);
             this.heat = response.data.heat;
             this.light = response.data.light;
           }
