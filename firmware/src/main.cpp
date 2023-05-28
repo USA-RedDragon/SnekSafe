@@ -112,7 +112,7 @@ void setup() {
     Serial.println("Wifi not connected.");
   } else {
     // Only update the light if we have a valid time after 1/1/2023
-    if (rtc.getEpoch() > 1672531200) {
+    if (rtc.getEpoch() != 0) {
       if (rtc.getMinute() >= settings.lightOnMinute && rtc.getHour(true) >= settings.lightOnHour
         && rtc.getMinute() <= settings.lightOffMinute && rtc.getHour(true) <= settings.lightOffHour) {
         // If we haven't already turned the light on during this minute, turn it on
@@ -145,7 +145,7 @@ void loop() {
     wifi_changed = false;
     if (wifi_connect(&settings)) {
       // Only update the light if we have a valid time after 1/1/2023
-      if (rtc.getEpoch() > 1672531200) {
+      if (rtc.getEpoch() != 0) {
         if (rtc.getMinute() >= settings.lightOnMinute && rtc.getHour(true) >= settings.lightOnHour
           && rtc.getMinute() <= settings.lightOffMinute && rtc.getHour(true) <= settings.lightOffHour) {
           // If we haven't already turned the light on during this minute, turn it on
@@ -176,7 +176,7 @@ void loop() {
   }
 
   // Only update the light if we have a valid time after 1/1/2023
-  if (rtc.getEpoch() > 1672531200) {
+  if (rtc.getEpoch() != 0) {
     if (rtc.getMinute() == settings.lightOnMinute && rtc.getHour(true) == settings.lightOnHour) {
       // If we haven't already turned the light on during this minute, turn it on
       if (!lightState) {
@@ -197,7 +197,7 @@ void loop() {
   digitalWrite(LIGHT_PIN, lightState);
 
   // Collect temp readings every 3 seconds
-  if(timer3s.fire() && rtc.getEpoch() > 1672531200) {
+  if(timer3s.fire() && rtc.getEpoch() != 0) {
     bool prevHeat = sht31_get_heater();
     sht31_set_heater(false);
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
@@ -229,7 +229,7 @@ void loop() {
   }
 
   // Humidity readings are only updated every 10 seconds
-  if(timer10s.fire() && rtc.getEpoch() > 1672531200) {
+  if(timer10s.fire() && rtc.getEpoch() != 0) {
     bool prevHeat = sht31_get_heater();
     sht31_set_heater(false);
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {

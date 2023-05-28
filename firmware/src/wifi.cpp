@@ -36,6 +36,8 @@ bool wifi_connect(settings_t* settings) {
             if (timeClient.forceUpdate()) {
                 rtc.setTime(timeClient.getEpochTime());
             }
+        } else {
+            rtc.setTime(timeClient.getEpochTime());
         }
 #ifdef ARDUINO_ARCH_ESP32
         if (!MDNS.begin(settings->mdnsName)) {
