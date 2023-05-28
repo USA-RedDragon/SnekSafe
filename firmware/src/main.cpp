@@ -137,12 +137,16 @@ void setup() {
   timer3s.begin(1000 * 3);
   timer10s.begin(1000 * 10);
   timer1m.begin(1000 * 60);
-  // 100Hz PWM
   timer10ms.begin(10);
+
+  // 100Hz PWM
+  analogWriteFrequency(100);
 }
 
 void loop() {
   captivePortal.loop();
+
+  analogWrite(HEATER_PIN, heaterPulseWidth);
 
   wifi_tick();
 
@@ -176,8 +180,6 @@ void loop() {
       settings_write(&default_settings2);
       ESP.restart();
     }
-    // Update the light state every 10ms
-    analogWrite(HEATER_PIN, heaterPulseWidth);
   }
 
   // Only update the light if we have a valid time after 1/1/2023
