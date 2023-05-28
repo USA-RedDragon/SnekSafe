@@ -206,7 +206,6 @@ void loop() {
       if (!pidController.isStarted()) {
         Serial.println("Starting PID controller");
         pidController.begin();
-        pidController.compute();
         Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
         pidController.debug();
         Serial.println("");

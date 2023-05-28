@@ -50,6 +50,7 @@ void PID::begin() {
     Serial.printf("PID: %f %f %f\n", *this->pGain, *this->iGain, *this->dGain);
     this->pidController.setWindUpLimits(*this->iMin, *this->iMax);
     this->pidController.setOutputLimits(0, 255);
+    this->pidController.compute();
     this->started = true;
 }
 
