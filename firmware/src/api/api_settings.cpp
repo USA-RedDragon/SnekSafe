@@ -305,6 +305,8 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
                 return;
             }
             settings->pGain = pGain;
+            pidController.end();
+            pidController.begin();
         }
 
         if (body.containsKey("iGain")) {
@@ -318,6 +320,8 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
                 return;
             }
             settings->iGain = iGain;
+            pidController.end();
+            pidController.begin();
         }
 
         if (body.containsKey("dGain")) {
@@ -331,6 +335,8 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
                 return;
             }
             settings->dGain = dGain;
+            pidController.end();
+            pidController.begin();
         }
 
         if (body.containsKey("iMax")) {
@@ -368,8 +374,6 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         response->setLength();
         request->send(response);
-        delay(100);
-        ESP.restart();
     });
     server->addHandler(handler);
 }
