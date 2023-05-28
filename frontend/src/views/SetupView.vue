@@ -253,7 +253,7 @@ export default {
       })
         .then((response) => {
           if (response.data && response.data.status != 'error') {
-            this.connectTimer = setInterval(this.checkConnectStatus, 500);
+            setTimeout(() => setInterval(this.checkConnectStatus, 500), 500);
             this.$toast.add({
               summary: 'Success',
               severity: 'success',
