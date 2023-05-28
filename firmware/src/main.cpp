@@ -206,6 +206,9 @@ void loop() {
       if (!pidController.isStarted()) {
         Serial.println("Starting PID controller");
         pidController.begin();
+        Serial.println("");
+      } else {
+        pidController.compute();
         Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
         pidController.debug();
         Serial.println("");
@@ -248,10 +251,6 @@ void loop() {
       Serial.println("Failed to read humidity in 10s loop");
     }
     sht31_set_heater(prevHeat);
-    pidController.compute();
-    Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
-    pidController.debug();
-    Serial.println("");
   }
 
   if(timer1m.fire()) {
