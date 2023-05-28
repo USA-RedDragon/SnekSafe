@@ -450,8 +450,10 @@ export default {
       captivePortalPassword: '',
       captivePortalChannel: 6,
       temperatureSetpoint: 82,
-      lightOnTime: 0,
-      lightOffTime: 0,
+      lightOnHour: 0,
+      lightOnMinute: 0,
+      lightOffHour: 0,
+      lightOffMinute: 0,
       mdnsName: '',
       pGain: 0,
       iGain: 0,
@@ -483,8 +485,22 @@ export default {
         minValue: minValue(70),
         maxValue: maxValue(100),
       },
-      // lightOnTime
-      // lightOffTime
+      lightOffHour: {
+        minValue: minValue(this.lightOnHour),
+        maxValue: maxValue(23),
+      },
+      lightOffMinute: {
+        minValue: minValue(this.lightOnHour == this.lightOffHour ? this.lightOnMinute : 0),
+        maxValue: maxValue(59),
+      },
+      lightOnHour: {
+        minValue: minValue(0),
+        maxValue: maxValue(23),
+      },
+      lightOnMinute: {
+        minValue: minValue(0),
+        maxValue: maxValue(59),
+      },
       mdnsName: {
         minLength: minLength(2),
         maxLength: maxLength(32),
@@ -527,8 +543,10 @@ export default {
           this.captivePortalSSID = response.data.captivePortalSSID;
           this.captivePortalChannel = response.data.captivePortalChannel;
           this.temperatureSetpoint = response.data.temperatureSetpoint;
-          this.lightOnTime = response.data.lightOnTime;
-          this.lightOffTime = response.data.lightOffTime;
+          this.lightOnHour = response.data.lightOnHour;
+          this.lightOnMinute = response.data.lightOnMinute;
+          this.lightOffHour = response.data.lightOffHour;
+          this.lightOffMinute = response.data.lightOffMinute;
           this.wifiSSID = response.data.wifiSSID;
           this.mdnsName = response.data.mdnsName;
           this.pGain = response.data.pGain;
@@ -569,11 +587,17 @@ export default {
       if (this.temperatureSetpoint !== this.originalSettings.temperatureSetpoint) {
         changedSettings.temperatureSetpoint = this.temperatureSetpoint;
       }
-      if (this.lightOnTime !== this.originalSettings.lightOnTime) {
-        changedSettings.lightOnTime = this.lightOnTime;
+      if (this.lightOnHour !== this.originalSettings.lightOnHour) {
+        changedSettings.lightOnHour = this.lightOnHour;
       }
-      if (this.lightOffTime !== this.originalSettings.lightOffTime) {
-        changedSettings.lightOffTime = this.lightOffTime;
+      if (this.lightOnMinute !== this.originalSettings.lightOnMinute) {
+        changedSettings.lightOnMinute = this.lightOnMinute;
+      }
+      if (this.lightOffMinute !== this.originalSettings.lightOffMinute) {
+        changedSettings.lightOffMinute = this.lightOffMinute;
+      }
+      if (this.lightOffHour !== this.originalSettings.lightOffHour) {
+        changedSettings.lightOffHour = this.lightOffHour;
       }
       if (this.mdnsName !== this.originalSettings.mdnsName) {
         changedSettings.mdnsName = this.mdnsName;
