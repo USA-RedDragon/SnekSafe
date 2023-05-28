@@ -33,14 +33,14 @@
     <Card>
       <template #title>Temperature History</template>
       <template #content>
-        <Chart type="line" :data="temperatureChartData" :options="temperatureChartOptions" />
+        <Chart ref="tempChart" type="line" :data="temperatureChartData" :options="temperatureChartOptions" />
       </template>
     </Card>
     <br />
     <Card>
       <template #title>Humidity History</template>
       <template #content>
-        <Chart type="line" :data="humidityChartData" :options="humidityChartOptions" />
+        <Chart ref="humidityChart" type="line" :data="humidityChartData" :options="humidityChartOptions" />
       </template>
     </Card>
   </div>
@@ -102,6 +102,7 @@ export default {
           duration: 0,
         },
         plugins: {
+          zoom: false,
           legend: {
             labels: {
               color: textColor,
@@ -137,6 +138,7 @@ export default {
           duration: 0,
         },
         plugins: {
+          zoom: false,
           legend: {
             labels: {
               color: textColor,
@@ -194,15 +196,30 @@ export default {
       source.addEventListener('state', (e) => {
         const state = JSON.parse(e.data);
         if ('temperature' in state) {
-          this.historyTemperature = [...this.historyTemperature, state.temperature];
-          this.historyTemperatureTimes =
-            [...this.historyTemperatureTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+          if (this.historyTemperature.length > 1000) {
+            this.$refs.tempChart.chart.data.labels = this.$refs.tempChart.chart.data.labels.slice(1);
+            this.$refs.tempChart.chart.data.datasets[0].data =
+              this.$refs.tempChart.chart.data.datasets[0].data.slice(1);
+          }
+          this.$refs.tempChart.chart.data.datasets[0].data =
+            [...this.$refs.tempChart.chart.data.datasets[0].data, state.temperature];
+          this.$refs.tempChart.chart.data.labels =
+            [...this.$refs.tempChart.chart.data.labels, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+          this.$refs.tempChart.chart.update();
         }
         if ('humidity' in state) {
-          this.historyHumidity = [...this.historyHumidity, state.humidity];
-          this.historyHumidityTimes =
-            [...this.historyHumidityTimes, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+          if (this.historyHumidity.length > 1000) {
+            this.$refs.humidityChart.chart.data.labels = this.$refs.humidityChart.chart.data.labels.slice(1);
+            this.$refs.humidityChart.chart.data.datasets[0].data =
+              this.$refs.humidityChart.chart.data.datasets[0].data.slice(1);
+          }
+          this.$refs.humidityChart.chart.data.datasets[0].data =
+            [...this.$refs.humidityChart.chart.data.datasets[0].data, state.humidity];
+          this.$refs.humidityChart.chart.data.labels =
+            [...this.$refs.humidityChart.chart.data.labels, moment.unix(state.lastUpdate).format('hh:mm:ss')];
+          this.$refs.humidityChart.chart.update();
         }
+
         this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
         this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
         this.heat = state.heat;
