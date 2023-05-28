@@ -295,7 +295,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         }
 
         if (body.containsKey("pGain")) {
-            int pGain = body["pGain"];
+            double pGain = body["pGain"];
             if (pGain < 0) {
                 root["status"] = "error";
                 root["message"] = "pGain out of range";
@@ -310,7 +310,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         }
 
         if (body.containsKey("iGain")) {
-            int iGain = body["iGain"];
+            double iGain = body["iGain"];
             if (iGain < 0) {
                 root["status"] = "error";
                 root["message"] = "iGain out of range";
@@ -325,7 +325,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         }
 
         if (body.containsKey("dGain")) {
-            int dGain = body["dGain"];
+            double dGain = body["dGain"];
             if (dGain < 0) {
                 root["status"] = "error";
                 root["message"] = "dGain out of range";
@@ -340,7 +340,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         }
 
         if (body.containsKey("iMax")) {
-            int iMax = body["iMax"];
+            double iMax = body["iMax"];
             if (iMax < 0) {
                 root["status"] = "error";
                 root["message"] = "iMax out of range";
@@ -354,7 +354,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
         }
 
         if (body.containsKey("iMin")) {
-            int iMin = body["iMin"];
+            double iMin = body["iMin"];
             if (iMin < 0) {
                 root["status"] = "error";
                 root["message"] = "iMin out of range";
