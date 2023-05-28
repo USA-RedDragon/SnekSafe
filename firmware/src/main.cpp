@@ -235,7 +235,7 @@ void loop() {
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
       humidity = stagedHumidity;
       Serial.print("Hum. % = "); Serial.println(humidity);
-      DynamicJsonDocument doc();
+      DynamicJsonDocument doc(1024);
       doc["humidity"] = humidity;
       doc["lastUpdate"] = lastUpdate;
       doc["heat"] = heaterPulseWidth > 0;
