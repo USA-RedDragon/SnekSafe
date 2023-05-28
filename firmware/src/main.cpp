@@ -14,6 +14,7 @@
 #include "captive_portal.h"
 #include "frontend.h"
 #include "globals.h"
+#include "ota.h"
 #include "pid.hpp"
 #include "settings.h"
 #include "sht31.h"
@@ -80,6 +81,8 @@ void setup() {
     return;
   }
 
+  ota_setup(&server, &captivePortal, &pidController);
+
   sht31_setup();
 
   // We don't accidentally want to start with the heater on
@@ -130,7 +133,7 @@ void setup() {
 void loop() {
   captivePortal.loop();
 
-  wifi_update_time();
+  wifi_tick();
 
   if (wifi_changed) {
     wifi_changed = false;
@@ -169,7 +172,7 @@ void loop() {
   // Only update the light if we have a valid time after 1/1/2023
   if (rtc.getEpoch() > 1672531200) {
     if (rtc.getMinute() == settings.lightOnMinute && rtc.getHour(true) == settings.lightOnHour) {
-    // If we haven't already turned the light on during this minute, turn it on
+      // If we haven't already turned the light on during this minute, turn it on
       if (!lightState) {
         lightState = true;
         Serial.println("Light On");

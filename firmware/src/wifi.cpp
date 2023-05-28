@@ -12,6 +12,8 @@
 
 #include <NTPClient.h>
 
+#include <ArduinoOTA.h>
+
 #include "globals.h"
 #include "wifi.h"
 
@@ -27,6 +29,7 @@ bool wifi_connect(settings_t* settings) {
         WiFi.setAutoConnect(true);
         WiFi.setAutoReconnect(true);
         Serial.printf("WiFi Connected. IP=%s\n", WiFi.localIP().toString().c_str());
+        ArduinoOTA.begin();
         timeClient.begin();
         timeClient.setTimeOffset(0);
         if (!timeClient.update()) {
@@ -44,13 +47,17 @@ bool wifi_connect(settings_t* settings) {
             if (MDNS.addService("http", "tcp", 80)) {
                 Serial.println("mDNS responder started on http://" + String(settings->mdnsName) + ".local");
             }
+#ifdef DEV
+            MDNS.enableArduino(3232, false);
+#endif
         }
         return true;
     }
 }
 
-void wifi_update_time() {
+void wifi_tick() {
     if (WiFi.status() == WL_CONNECTED) {
+        ArduinoOTA.handle();
         if (timeClient.update()) {
             rtc.setTime(timeClient.getEpochTime());
         }
