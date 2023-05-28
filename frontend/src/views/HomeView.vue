@@ -50,7 +50,9 @@
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
 import InputSwitch from 'primevue/inputswitch';
-
+import { Chart as ChartJS } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+ChartJS.register(annotationPlugin);
 import moment from 'moment';
 
 import API from '@/services/API';
@@ -94,6 +96,7 @@ export default {
       light: false,
       historyTemperature: [],
       historyTemperatureTimes: [],
+      temperatureSetpoint: 0,
       historyHumidity: [],
       historyHumidityTimes: [],
       expoBackoff: 0,
@@ -142,6 +145,17 @@ export default {
           legend: {
             labels: {
               color: textColor,
+            },
+          },
+          annotation: {
+            annotations: {
+              line1: {
+                type: 'line',
+                yMin: 82,
+                yMax: 82,
+                borderColor: 'rgb(255, 99, 132)',
+                borderWidth: 2,
+              },
             },
           },
         },
@@ -195,6 +209,8 @@ export default {
 
       source.addEventListener('state', (e) => {
         const state = JSON.parse(e.data);
+        this.temperatureChartOptions.plugins.annotation.annotations.line1.yMin = this.temperatureSetpoint;
+        this.temperatureChartOptions.plugins.annotation.annotations.line1.yMax = this.temperatureSetpoint;
         if ('temperature' in state) {
           this.temperature = state.temperature.toFixed(2);
           if (this.historyTemperature.length > 1000) {
@@ -224,6 +240,7 @@ export default {
 
         this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
         this.heaterPulseWidth = Math.round((state.heaterPulseWidth / 255) * 100);
+        this.temperatureSetpoint = state.temperatureSetpoint;
         this.heat = state.heat;
         this.light = state.light;
       }, false);
@@ -281,6 +298,9 @@ export default {
             this.humidity = response.data.humidity.toFixed(2);
             // lastUpdate is the number of seconds since the epoch
             this.lastUpdate = moment.unix(response.data.lastUpdate).fromNow();
+            this.temperatureSetpoint = response.data.temperatureSetpoint;
+            this.temperatureChartOptions.plugins.annotation.annotations.line1.yMin = this.temperatureSetpoint;
+            this.temperatureChartOptions.plugins.annotation.annotations.line1.yMax = this.temperatureSetpoint;
             // heaterPulseWidth is between 0 and 255, but we want to display it as a percentage
             this.heaterPulseWidth = Math.round((response.data.heaterPulseWidth / 255) * 100);
             this.heat = response.data.heat;
