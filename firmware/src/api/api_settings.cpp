@@ -368,6 +368,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         response->setLength();
         request->send(response);
+        delay(100);
         ESP.restart();
     });
     server->addHandler(handler);
