@@ -16,6 +16,13 @@ const int HEATER_PIN = 18;
 const int LIGHT_PIN = 19;
 const int BOOT0_PIN = 0;
 
+extern float humidityHistory[333];
+extern float temperatureHistory[999];
+extern unsigned long humidityTimeHistory[333];
+extern unsigned long temperatureTimeHistory[999];
+extern int humidityHistoryIndex;
+extern int temperatureHistoryIndex;
+
 extern AsyncEventSource events;
 
 #endif

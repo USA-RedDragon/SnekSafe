@@ -29,6 +29,13 @@ double temperature = 0;
 float humidity = 0;
 double heaterPulseWidth = 0;
 
+float humidityHistory[333] = {0};
+float temperatureHistory[999] = {0};
+unsigned long humidityTimeHistory[333] = {0};
+unsigned long temperatureTimeHistory[999] = {0};
+int humidityHistoryIndex = 0;
+int temperatureHistoryIndex = 0;
+
 // File globals
 settings_t settings;
 AsyncWebServer server(80);
@@ -202,6 +209,18 @@ void loop() {
       temperature = (float) stagedTemperature;
       lastUpdate = rtc.getEpoch();
       Serial.print("Temp *F = "); Serial.println(temperature);
+      temperatureHistory[temperatureHistoryIndex] = temperature;
+      temperatureTimeHistory[temperatureHistoryIndex] = lastUpdate;
+      if (temperatureHistoryIndex == 998) {
+        // Shift the history arrays
+        for (int i = 0; i < 998; i++) {
+          temperatureHistory[i] = temperatureHistory[i + 1];
+          temperatureTimeHistory[i] = temperatureTimeHistory[i + 1];
+        }
+        temperatureHistoryIndex = 998;
+      } else {
+        temperatureHistoryIndex++;
+      }
       // we have a reading, if the pid controller is not started, start it
       if (!pidController.isStarted()) {
         Serial.println("Starting PID controller");
@@ -236,6 +255,18 @@ void loop() {
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
       humidity = stagedHumidity;
       Serial.print("Hum. % = "); Serial.println(humidity);
+      humidityHistory[humidityHistoryIndex] = humidity;
+      humidityTimeHistory[humidityHistoryIndex] = rtc.getEpoch();
+      if (humidityHistoryIndex == 332) {
+        // Shift the history arrays
+        for (int i = 0; i < 332; i++) {
+          humidityHistory[i] = humidityHistory[i + 1];
+          humidityTimeHistory[i] = humidityTimeHistory[i + 1];
+        }
+        humidityHistoryIndex = 332;
+      } else {
+        humidityHistoryIndex++;
+      }
       DynamicJsonDocument doc(1024);
       doc["humidity"] = humidity;
       doc["lastUpdate"] = lastUpdate;

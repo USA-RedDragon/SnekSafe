@@ -1,6 +1,7 @@
 #include <AsyncJson.h>
 
 #include "api.h"
+#include "api/api_history.h"
 #include "api/api_ota.h"
 #include "api/api_settings.h"
 #include "api/api_toggles.h"
@@ -47,6 +48,7 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         request->send(response);
     });
 
+    api_history_setup(server);
     api_ota_setup(server, settings);
     api_settings_setup(server, settings);
     api_toggles_setup(server, settings);
