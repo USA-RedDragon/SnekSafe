@@ -197,7 +197,7 @@ void loop() {
   digitalWrite(LIGHT_PIN, lightState);
 
   // Collect temp readings every 3 seconds
-  if(timer3s.fire()) {
+  if(timer3s.fire() && rtc.getEpoch() > 1672531200) {
     bool prevHeat = sht31_get_heater();
     sht31_set_heater(false);
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
@@ -229,7 +229,7 @@ void loop() {
   }
 
   // Humidity readings are only updated every 10 seconds
-  if(timer10s.fire()) {
+  if(timer10s.fire() && rtc.getEpoch() > 1672531200) {
     bool prevHeat = sht31_get_heater();
     sht31_set_heater(false);
     if (sht31_read(&stagedTemperature, &stagedHumidity)) {
