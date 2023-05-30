@@ -126,7 +126,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         if (body.containsKey("lightOnHour")) {
             int lightOnHour = body["lightOnHour"];
-            if (lightOnHour < 0) {
+            if (lightOnHour < 0 || lightOnHour > 23) {
                 root["status"] = "error";
                 root["message"] = "lightOnHour out of range";
                 response->setCode(400);
@@ -139,7 +139,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         if (body.containsKey("lightOffHour")) {
             int lightOffHour = body["lightOffHour"];
-            if (lightOffHour < 0) {
+            if (lightOffHour < 0 || lightOffHour > 23) {
                 root["status"] = "error";
                 root["message"] = "lightOffHour out of range";
                 response->setCode(400);
@@ -150,22 +150,22 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             settings->lightOffHour = lightOffHour;
         }
 
-        if (body.containsKey("lightOffHour")) {
-            int lightOffHour = body["lightOffHour"];
-            if (lightOffHour < 0) {
+        if (body.containsKey("lightOnMinute")) {
+            int lightOnMinute = body["lightOnMinute"];
+            if (lightOnMinute < 0 || lightOnMinute > 59) {
                 root["status"] = "error";
-                root["message"] = "lightOffHour out of range";
+                root["message"] = "lightOnMinute out of range";
                 response->setCode(400);
                 response->setLength();
                 request->send(response);
                 return;
             }
-            settings->lightOffHour = lightOffHour;
+            settings->lightOnMinute = lightOnMinute;
         }
 
         if (body.containsKey("lightOffMinute")) {
             int lightOffMinute = body["lightOffMinute"];
-            if (lightOffMinute < 0) {
+            if (lightOffMinute < 0 || lightOffMinute > 59) {
                 root["status"] = "error";
                 root["message"] = "lightOffMinute out of range";
                 response->setCode(400);
