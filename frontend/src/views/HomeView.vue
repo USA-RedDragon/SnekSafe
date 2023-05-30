@@ -153,8 +153,8 @@ export default {
           },
         },
         scales: {
-            display: true,
           x: {
+            display: true,
             ticks: {
               color: textColorSecondary,
             },
@@ -165,8 +165,6 @@ export default {
           temperature: {
             display: true,
             position: 'left',
-            min: 80,
-            max: 84,
             ticks: {
               color: textColorSecondary,
             },
@@ -205,8 +203,6 @@ export default {
         const state = JSON.parse(e.data);
         this.temperatureChartOptions.plugins.annotation.annotations.line1.yMin = this.temperatureSetpoint;
         this.temperatureChartOptions.plugins.annotation.annotations.line1.yMax = this.temperatureSetpoint;
-        this.temperatureChartOptions.scales.temperature.min = this.temperatureSetpoint-2;
-        this.temperatureChartOptions.scales.temperature.max = this.temperatureSetpoint+2;
 
         if ('temperature' in state) {
           this.temperature = state.temperature.toFixed(2);
