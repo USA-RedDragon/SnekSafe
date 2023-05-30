@@ -219,9 +219,11 @@ void loop() {
 
   if(timer500ms.fire() && pidController.isStarted()) {
     pidController.compute();
+#ifdef DEV
     Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
     pidController.debug();
     Serial.println("");
+#endif
   }
 
   if(timer10s.fire() && pidController.isStarted()) {
