@@ -39,8 +39,9 @@ html {
   border-radius: var(--border-radius);
 }
 
-.p-inputtext {
-  width: 100%;
+.p-inputtext,
+.p-calendar {
+  width: 100% !important;
 }
 
 .p-toast {

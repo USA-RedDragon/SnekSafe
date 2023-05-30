@@ -118,8 +118,22 @@
             <br />
           </span>
           <br />
-          <!-- lightOnTime -->
-          <!-- lightOffTime -->
+          <span class="p-float-label">
+            <Calendar id="turnOnTime" v-model="turnOnTime" timeOnly hourFormat="12" />
+            <label
+              for="turnOnTime"
+              >Light Turn On Time</label
+            >
+          </span>
+          <br />
+          <span class="p-float-label">
+            <Calendar id="turnOffTime" v-model="turnOffTime" timeOnly hourFormat="12" />
+            <label
+              for="turnOffTime"
+              >Light Turn Off Time</label
+            >
+          </span>
+          <br />
           <span class="p-float-label">
             <InputText
               id="mdnsName"
@@ -417,10 +431,13 @@
 
 <script>
 import Card from 'primevue/card';
+import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
+
+import moment from 'moment';
 
 import API from '@/services/API';
 
@@ -430,6 +447,7 @@ import { maxLength, minLength, maxValue, minValue, numeric } from '@vuelidate/va
 export default {
   components: {
     Card,
+    Calendar,
     InputText,
     PVButton: Button,
     Dropdown,
@@ -465,6 +483,8 @@ export default {
       wifiPassword: '',
       scanResults: [],
       scanTimer: null,
+      turnOffTime: null,
+      turnOnTime: null,
     };
   },
   validations() {
@@ -484,22 +504,6 @@ export default {
       temperatureSetpoint: {
         minValue: minValue(70),
         maxValue: maxValue(100),
-      },
-      lightOffHour: {
-        minValue: minValue(this.lightOnHour),
-        maxValue: maxValue(23),
-      },
-      lightOffMinute: {
-        minValue: minValue(this.lightOnHour == this.lightOffHour ? this.lightOnMinute : 0),
-        maxValue: maxValue(59),
-      },
-      lightOnHour: {
-        minValue: minValue(0),
-        maxValue: maxValue(23),
-      },
-      lightOnMinute: {
-        minValue: minValue(0),
-        maxValue: maxValue(59),
       },
       mdnsName: {
         minLength: minLength(2),
@@ -535,6 +539,19 @@ export default {
       },
     };
   },
+  watch: {
+    turnOnTime: function(val) {
+      // Take the local time and convert it to UTC
+      const turnOnTimeUTC = moment(val).utc();
+      this.lightOnHour = turnOnTimeUTC.hour();
+      this.lightOnMinute = turnOnTimeUTC.minute();
+    },
+    turnOffTime: function(val) {
+      const turnOffTimeUTC = moment(val).utc();
+      this.lightOffHour = turnOffTimeUTC.hour();
+      this.lightOffMinute = turnOffTimeUTC.minute();
+    },
+  },
   methods: {
     getSettings() {
       API.get('/settings')
@@ -545,8 +562,11 @@ export default {
           this.temperatureSetpoint = response.data.temperatureSetpoint;
           this.lightOnHour = response.data.lightOnHour;
           this.lightOnMinute = response.data.lightOnMinute;
+          // turnOnTime is in UTC, so we need to convert it to local time
+          this.turnOnTime = moment().utc().hour(response.data.lightOnHour).minute(response.data.lightOnMinute).toDate();
           this.lightOffHour = response.data.lightOffHour;
           this.lightOffMinute = response.data.lightOffMinute;
+          this.turnOffTime = moment().utc().hour(response.data.lightOffHour).minute(response.data.lightOffMinute).toDate();
           this.wifiSSID = response.data.wifiSSID;
           this.mdnsName = response.data.mdnsName;
           this.pGain = response.data.pGain;
