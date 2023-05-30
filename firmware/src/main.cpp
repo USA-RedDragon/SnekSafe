@@ -25,7 +25,6 @@
 settings_t settings;
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
-float stagedHumidity = 0;
 float stagedTemperature = 0;
 
 PID pidController = PID(
@@ -89,9 +88,6 @@ void setup() {
   ota_setup(&server, &captivePortal, &pidController);
 
   sht31_setup();
-
-  // We don't accidentally want to start with the heater on
-  sht31_set_heater(false);
 
   captivePortal.setup(&settings);
 
@@ -287,12 +283,10 @@ void loop() {
   }
 
   if(timer1m.fire()) {
-    bool prevHeat = sht31_get_heater();
-    if (humidity > 95 && !prevHeat) {
+    if (humidity > 95) {
       Serial.println("SHT31 Heater Enabled");
       sht31_set_heater(true);
-    } else if (prevHeat) {
-      Serial.println("SHT31 Heater Disabled");
+    } else {
       sht31_set_heater(false);
     }
   }

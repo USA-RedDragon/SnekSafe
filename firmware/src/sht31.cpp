@@ -1,40 +1,46 @@
 #include <Arduino.h>
-#include <Adafruit_SHT31.h>
+#include <DFRobot_SHT3x.h>
 
-Adafruit_SHT31 sht31 = Adafruit_SHT31();
+DFRobot_SHT3x sht3x(&Wire,/*address=*/0x44);
 
 void sht31_setup() {
-    if (!sht31.begin(0x44)) {
-        Serial.println("Couldn't find SHT31");
+    if (sht3x.begin() != 0) {
+        Serial.println("Failed to initialize the temperature sensor");
         ESP.restart();
         return;
     }
 
-    Serial.print("Heater Enabled State: ");
-    if (sht31.isHeaterEnabled()) {
-        Serial.println("ENABLED");
-    } else {
-        Serial.println("DISABLED");
+    if(!sht3x.softReset()){
+        Serial.println("Failed to reset the temperature sensor");
+        ESP.restart();
+        return;
+    }
+
+    if(!sht3x.startPeriodicMode(sht3x.eMeasureFreq_10Hz)){
+        Serial.println("Failed to enter the periodic temperature sensing mode");
+        ESP.restart();
+        return;
     }
 }
 
 bool sht31_read(float* temperature, float* humidity) {
-    float t = sht31.readTemperature();
-    float h = sht31.readHumidity();
+    auto data = sht3x.readTemperatureAndHumidity();
+    if (data.ERR != 0) {
+        Serial.printf("Failed to read temperature and humidity: %d\n", data.ERR);
+        return false;
+    }
 
     bool ret = false;
 
-    if (!isnan(t)) {
-        // convert to fahrenheit
-        t = (t * 1.8) + 32;
+    if (!isnan(data.TemperatureF)) {
         ret = true;
-        *temperature = t;
+        *temperature = data.TemperatureF;
     } else {
         Serial.println("Failed to read temperature");
     }
 
-    if (!isnan(h)) {
-        *humidity = h;
+    if (!isnan(data.Humidity)) {
+        *humidity = data.Humidity;
     } else {
         Serial.println("Failed to read humidity");
         ret = false;
@@ -45,12 +51,12 @@ bool sht31_read(float* temperature, float* humidity) {
 
 void sht31_set_heater(bool enabled) {
     if (enabled) {
-        sht31.heater(true);
+        if (!sht3x.heaterEnable()) {
+            Serial.println("Failed to enable sensor heater");
+        }
     } else {
-        sht31.heater(false);
+        if (!sht3x.heaterDisable()) {
+            Serial.println("Failed to disable sensor heater");
+        }
     }
-}
-
-bool sht31_get_heater() {
-    return sht31.isHeaterEnabled();
 }

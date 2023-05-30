@@ -4,6 +4,5 @@
 void sht31_setup();
 bool sht31_read(float* temperature, float* humidity);
 void sht31_set_heater(bool enabled);
-bool sht31_get_heater();
 
 #endif
