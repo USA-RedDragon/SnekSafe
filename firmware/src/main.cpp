@@ -3,6 +3,7 @@
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <FireTimer.h>
+#include <Wire.h>
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
@@ -89,6 +90,8 @@ void setup() {
   ota_setup(&server, &captivePortal, &pidController);
 
   sht31_setup();
+
+  Wire.setTimeOut(30);
 
   captivePortal.setup(&settings);
 
