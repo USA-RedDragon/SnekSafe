@@ -69,6 +69,11 @@ export default {
     this.getHumidityHistory();
     this.getState();
 
+    if (window.innerWidth < 600) {
+      this.temperatureChartOptions.scales.x.display = false;
+      this.humidityChartOptions.scales.x.display = false;
+    }
+
     if (window.EventSource) {
       this.setupEvents();
     } else {
@@ -114,6 +119,7 @@ export default {
         },
         scales: {
           x: {
+            display: true,
             ticks: {
               color: textColorSecondary,
             },
@@ -160,6 +166,7 @@ export default {
           },
         },
         scales: {
+            display: true,
           x: {
             ticks: {
               color: textColorSecondary,
