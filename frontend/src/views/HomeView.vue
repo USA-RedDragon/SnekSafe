@@ -1,34 +1,22 @@
 <template>
   <div>
-    <div class="flexRow">
-      <Card class="halfWidth">
-        <template #title>WiFi Status</template>
-        <template #content>
-          <p><span style="font-weight: bold;">Mode</span>: {{ mode }}</p>
-          <p><span style="font-weight: bold;">Status</span>: {{ status }}</p>
-          <p><span style="font-weight: bold;">SSID</span>: {{ ssid }}</p>
-          <p><span style="font-weight: bold;">IP Address</span>: {{ ip }}</p>
-        </template>
-      </Card>
-      <Card class="halfWidth">
-        <template #title>Controls</template>
-        <template #content>
-          <p><span style="font-weight: bold;">Last Update</span>: {{ lastUpdate }}</p>
-          <p><span style="font-weight: bold;">Temperature</span>: {{ temperature }} &deg;F</p>
-          <p><span style="font-weight: bold;">Humidity</span>: {{ humidity }}%</p>
-          <p><span style="font-weight: bold;">Heater Pulse Width</span>: {{ heaterPulseWidth }}%</p>
-          <br />
-          <font-awesome-icon icon="fa-regular fa-lightbulb" style="padding-right: 0.5em;"/>
-          <label for="light">Light</label>
-          <InputSwitch v-model="light" inputId="light" style="margin-left: 1em; margin-top: -1em;"
-            @change="toggleLight" />
-          <br />
-          <font-awesome-icon icon="fa-solid fa-fire-flame-curved" style="padding-right: 0.5em;"/>
-          <label for="heat">Heat</label>
-          <InputSwitch v-model="heat" inputId="heat" style="margin-left: 1em; margin-top: -1em;" @change="toggleHeat" />
-        </template>
-      </Card>
-    </div>
+    <Card>
+      <template #title>Status</template>
+      <template #content>
+        <p><span style="font-weight: bold;">WiFi Status</span>: {{ status }}</p>
+        <p><span style="font-weight: bold;">WiFi SSID</span>: {{ ssid }}</p>
+        <p><span style="font-weight: bold;">WiFi IP Address</span>: {{ ip }}</p>
+        <p><span style="font-weight: bold;">Temperature</span>: {{ temperature }} &deg;F</p>
+        <p><span style="font-weight: bold;">Humidity</span>: {{ humidity }}%</p>
+        <p><span style="font-weight: bold;">Heater Pulse Width</span>: {{ heaterPulseWidth }}%</p>
+        <br />
+        <font-awesome-icon icon="fa-regular fa-lightbulb" style="padding-right: 0.5em;"/>
+        <label for="light">Light</label>
+        <InputSwitch v-model="light" inputId="light" style="margin-left: 1em; margin-top: -1em;"
+          @change="toggleLight" />
+        <br />
+      </template>
+    </Card>
     <br />
     <Card>
       <template #title>Temperature History</template>
@@ -97,7 +85,6 @@ export default {
       humidity: 0,
       lastUpdate: '',
       heaterPulseWidth: 0,
-      heat: false,
       light: false,
       historyTemperature: [],
       historyTemperatureTimes: [],
@@ -251,20 +238,8 @@ export default {
         this.lastUpdate = moment.unix(state.lastUpdate).fromNow();
         this.heaterPulseWidth = ((state.heaterPulseWidth / 255) * 100).toFixed(2);
         this.temperatureSetpoint = state.temperatureSetpoint;
-        this.heat = state.heat;
         this.light = state.light;
       }, false);
-    },
-    toggleHeat() {
-      API.post('/toggle/heat', { heat: this.heat })
-        .then((response) => {
-          if (response.data && response.data.status != 'error') {
-            this.heat = response.data.status == 'on';
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     },
     toggleLight() {
       API.post('/toggle/light', { light: this.light })
@@ -337,7 +312,6 @@ export default {
             this.temperatureChartOptions.plugins.annotation.annotations.line1.yMax = this.temperatureSetpoint;
             // heaterPulseWidth is between 0 and 255, but we want to display it as a percentage
             this.heaterPulseWidth = ((response.data.heaterPulseWidth / 255) * 100).toFixed(2);
-            this.heat = response.data.heat;
             this.light = response.data.light;
           }
         })
