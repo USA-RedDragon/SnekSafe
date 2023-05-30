@@ -40,7 +40,8 @@ html {
 }
 
 .p-inputtext,
-.p-calendar {
+.p-calendar,
+.p-dropdown {
   width: 100% !important;
 }
 
