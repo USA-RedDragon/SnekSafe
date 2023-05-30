@@ -17,7 +17,7 @@ void api_setup(AsyncWebServer* server, settings_t* settings) {
         // 8 commit hash characters + 1 for null terminator
         // Extra for semver
         char commitHash[25];
-        sprintf(commitHash, "v1.0.0-%s", GIT_COMMIT);
+        sprintf(commitHash, "%s-%s", VERSION, GIT_COMMIT);
         request->send(200, "text/plain", commitHash);
     });
 

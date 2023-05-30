@@ -75,7 +75,7 @@ void setup() {
 
   delay(100); // Wait for serial to initialize. Early messages may be lost otherwise.
 
-  Serial.printf("\nSnekSafe v1.0.0-%s\n", GIT_COMMIT);
+  Serial.printf("\nSnekSafe v%s-%s\n", VERSION, GIT_COMMIT);
 
   prefs.begin("settings");
   settings_read(&settings);
