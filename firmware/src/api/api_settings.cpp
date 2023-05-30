@@ -176,6 +176,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             settings->lightOffMinute = lightOffMinute;
         }
 
+        bool changePortalPassword = false;
         if (body.containsKey("captivePortalPassword")) {
             const char* captivePortalPassword = body["captivePortalPassword"];
             auto captivePortalPassword_len = strlen(captivePortalPassword);
@@ -203,6 +204,7 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
             }
             strncpy(settings->captivePortalPassword, captivePortalPassword, captivePortalPassword_len);
             settings->captivePortalPassword[captivePortalPassword_len] = '\0';
+            changePortalPassword = true;
         }
 
         if (body.containsKey("mdnsName")) {
@@ -374,6 +376,9 @@ void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
 
         response->setLength();
         request->send(response);
+        if (changePortalPassword) {
+            captivePortal.changePassword(settings);
+        }
     });
     server->addHandler(handler);
 }

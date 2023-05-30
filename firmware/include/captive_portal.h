@@ -14,6 +14,7 @@ extern const IPAddress CAPTIVE_PORTAL_GATEWAY;
 class CaptivePortal {
 public:
     CaptivePortal(AsyncWebServer* webServer);
+    void changePassword(settings_t* settings);
     void setup(settings_t* settings);
     void loop();
     void end();

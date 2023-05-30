@@ -49,6 +49,12 @@ CaptivePortal::CaptivePortal(AsyncWebServer* webServer) {
     this->dnsServer = new DNSServer();
 }
 
+void CaptivePortal::changePassword(settings_t* settings) {
+    WiFi.softAPdisconnect(false);
+    WiFi.softAPConfig(CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_IP, CAPTIVE_PORTAL_GATEWAY);
+    WiFi.softAP(settings->captivePortalSSID, settings->captivePortalPassword, settings->captivePortalChannel, 0, MAX_AP_CLIENTS);
+}
+
 void CaptivePortal::setup(settings_t* settings) {
     Serial.println("Starting SoftAP");
     if (WiFi.getMode() == WIFI_STA) {

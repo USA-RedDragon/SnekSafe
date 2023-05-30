@@ -21,26 +21,10 @@
 #include "sht31.h"
 #include "wifi.h"
 
-// Program-wide globals
-bool lightState = false;
-unsigned long lastUpdate = 0;
-bool wifi_changed = false;
-double temperature = 0;
-float humidity = 0;
-double heaterPulseWidth = 0;
-
-float humidityHistory[333] = {0};
-float temperatureHistory[999] = {0};
-unsigned long humidityTimeHistory[333] = {0};
-unsigned long temperatureTimeHistory[999] = {0};
-int humidityHistoryIndex = 0;
-int temperatureHistoryIndex = 0;
-
 // File globals
 settings_t settings;
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
-CaptivePortal captivePortal(&server);
 float stagedHumidity = 0;
 float stagedTemperature = 0;
 
@@ -59,6 +43,22 @@ FireTimer timer3s;
 FireTimer timer10s;
 FireTimer timer1m;
 FireTimer timer10ms;
+
+// Program-wide globals
+bool lightState = false;
+unsigned long lastUpdate = 0;
+bool wifi_changed = false;
+double temperature = 0;
+float humidity = 0;
+double heaterPulseWidth = 0;
+CaptivePortal captivePortal(&server);
+
+float humidityHistory[333] = {0};
+float temperatureHistory[999] = {0};
+unsigned long humidityTimeHistory[333] = {0};
+unsigned long temperatureTimeHistory[999] = {0};
+int humidityHistoryIndex = 0;
+int temperatureHistoryIndex = 0;
 
 void setup() {
   pinMode(HEATER_PIN, OUTPUT);

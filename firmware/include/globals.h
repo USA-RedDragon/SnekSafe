@@ -4,6 +4,8 @@
 #include <ESPAsyncWebServer.h>
 #include <ESP32Time.h>
 
+#include "captive_portal.h"
+
 extern bool lightState;
 extern bool wifi_changed;
 extern ESP32Time rtc;
@@ -24,5 +26,6 @@ extern int humidityHistoryIndex;
 extern int temperatureHistoryIndex;
 
 extern AsyncEventSource events;
+extern CaptivePortal captivePortal;
 
 #endif
