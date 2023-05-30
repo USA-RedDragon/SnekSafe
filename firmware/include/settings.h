@@ -45,9 +45,9 @@ const settings_t default_settings =
     "", // captivePortalPassword
     6, // captivePortalChannel
     82, // temperatureSetpoint
-    11, // lightOnHour
+    15, // lightOnHour
     0, // lightOnMinute
-    21, // lightOffHour
+    3, // lightOffHour
     0, // lightOffMinute
     "", // wifiSSID
     "", // wifiPassword
