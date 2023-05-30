@@ -38,10 +38,11 @@ PID pidController = PID(
   &heaterPulseWidth
 );
 
-FireTimer timer3s;
-FireTimer timer10s;
 FireTimer timer1m;
+FireTimer timer10s;
 FireTimer timer10ms;
+FireTimer timer100ms;
+FireTimer timer500ms;
 
 // Program-wide globals
 bool lightState = false;
@@ -130,13 +131,13 @@ void setup() {
     }
   }
 
-  timer3s.begin(1000 * 3);
-  timer10s.begin(1000 * 10);
   timer1m.begin(1000 * 60);
+  timer10s.begin(1000 * 10);
+  timer500ms.begin(500);
+  timer100ms.begin(100);
   timer10ms.begin(10);
 
-  // 100Hz PWM
-  analogWriteFrequency(100);
+  analogWriteFrequency(120);
 }
 
 void loop() {
@@ -199,95 +200,83 @@ void loop() {
 
   digitalWrite(LIGHT_PIN, lightState);
 
-  // Collect temp readings every 3 seconds
-  if(timer3s.fire() && rtc.getEpoch() != 0) {
-    bool prevHeat = sht31_get_heater();
-    sht31_set_heater(false);
-    if (sht31_read(&stagedTemperature, &stagedHumidity)) {
+  if(timer100ms.fire() && rtc.getEpoch() != 0) {
+    if (sht31_read(&stagedTemperature, &humidity)) {
       temperature = (float) stagedTemperature;
       lastUpdate = rtc.getEpoch();
-      Serial.print("Temp *F = "); Serial.println(temperature);
-      temperatureHistory[temperatureHistoryIndex] = temperature;
-      temperatureTimeHistory[temperatureHistoryIndex] = lastUpdate;
-      if (temperatureHistoryIndex == 998) {
-        // Shift the history arrays
-        for (int i = 0; i < 998; i++) {
-          temperatureHistory[i] = temperatureHistory[i + 1];
-          temperatureTimeHistory[i] = temperatureTimeHistory[i + 1];
-        }
-        temperatureHistoryIndex = 998;
-      } else {
-        temperatureHistoryIndex++;
-      }
-      // we have a reading, if the pid controller is not started, start it
       if (!pidController.isStarted()) {
         Serial.println("Starting PID controller");
         pidController.begin();
         Serial.println("");
-      } else {
-        pidController.compute();
-        Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
-        pidController.debug();
-        Serial.println("");
       }
-      DynamicJsonDocument doc(1024);
-      doc["temperature"] = temperature;
-      doc["lastUpdate"] = lastUpdate;
-      doc["heat"] = heaterPulseWidth > 0;
-      doc["light"] = lightState;
-      doc["heaterPulseWidth"] = heaterPulseWidth;
-      doc["temperatureSetpoint"] = settings.temperatureSetpoint;
-      String json;
-      serializeJson(doc, json);
-      events.send(json.c_str(), "state", millis());
-      sht31_set_heater(prevHeat);
     } else {
-      Serial.println("Failed to read temperature in 3s loop");
+      Serial.println("Failed to read temperature in 100ms loop");
     }
   }
 
-  // Humidity readings are only updated every 10 seconds
-  if(timer10s.fire() && rtc.getEpoch() != 0) {
-    bool prevHeat = sht31_get_heater();
-    sht31_set_heater(false);
-    if (sht31_read(&stagedTemperature, &stagedHumidity)) {
-      humidity = stagedHumidity;
-      Serial.print("Hum. % = "); Serial.println(humidity);
-      humidityHistory[humidityHistoryIndex] = humidity;
-      humidityTimeHistory[humidityHistoryIndex] = rtc.getEpoch();
-      if (humidityHistoryIndex == 332) {
-        // Shift the history arrays
-        for (int i = 0; i < 332; i++) {
-          humidityHistory[i] = humidityHistory[i + 1];
-          humidityTimeHistory[i] = humidityTimeHistory[i + 1];
-        }
-        humidityHistoryIndex = 332;
-      } else {
-        humidityHistoryIndex++;
+  if(timer500ms.fire() && pidController.isStarted()) {
+    pidController.compute();
+    Serial.print("Heater Pulse Width = "); Serial.println(heaterPulseWidth);
+    pidController.debug();
+    Serial.println("");
+  }
+
+  if(timer10s.fire() && pidController.isStarted()) {
+    Serial.print("Temp *F = "); Serial.println(temperature);
+    Serial.print("Humidity % = "); Serial.println(humidity);
+
+    DynamicJsonDocument doc(1024);
+    doc["temperature"] = temperature;
+    doc["humidity"] = humidity;
+    doc["lastUpdate"] = lastUpdate;
+    doc["heat"] = heaterPulseWidth > 0;
+    doc["light"] = lightState;
+    doc["heaterPulseWidth"] = heaterPulseWidth;
+    doc["temperatureSetpoint"] = settings.temperatureSetpoint;
+    String json;
+    serializeJson(doc, json);
+    events.send(json.c_str(), "state", millis());
+
+    if (temperatureHistoryIndex == 998) {
+      // Shift the history arrays
+      for (int i = 0; i < 998; i++) {
+        temperatureHistory[i] = temperatureHistory[i + 1];
+        temperatureTimeHistory[i] = temperatureTimeHistory[i + 1];
       }
-      DynamicJsonDocument doc(1024);
-      doc["humidity"] = humidity;
-      doc["lastUpdate"] = lastUpdate;
-      doc["heat"] = heaterPulseWidth > 0;
-      doc["light"] = lightState;
-      doc["heaterPulseWidth"] = heaterPulseWidth;
-      doc["temperatureSetpoint"] = settings.temperatureSetpoint;
-      String json;
-      serializeJson(doc, json);
-      events.send(json.c_str(), "state", millis());
-      sht31_set_heater(prevHeat);
+      temperatureHistoryIndex = 998;
+      temperatureHistory[temperatureHistoryIndex] = temperature;
+      temperatureTimeHistory[temperatureHistoryIndex] = lastUpdate;
     } else {
-      Serial.println("Failed to read humidity in 10s loop");
+      temperatureHistory[temperatureHistoryIndex] = temperature;
+      temperatureTimeHistory[temperatureHistoryIndex] = lastUpdate;
+      temperatureHistoryIndex++;
     }
-    sht31_set_heater(prevHeat);
+
+    if (humidityHistoryIndex == 998) {
+      // Shift the history arrays
+      for (int i = 0; i < 998; i++) {
+        humidityHistory[i] = humidityHistory[i + 1];
+        humidityTimeHistory[i] = humidityTimeHistory[i + 1];
+      }
+      humidityHistoryIndex = 998;
+      humidityHistory[humidityHistoryIndex] = humidity;
+      humidityTimeHistory[humidityHistoryIndex] = lastUpdate;
+    } else {
+      humidityHistory[humidityHistoryIndex] = humidity;
+      humidityTimeHistory[humidityHistoryIndex] = lastUpdate;
+      humidityHistoryIndex++;
+    }
   }
 
   if(timer1m.fire()) {
-    if (humidity > 95) {
+    static bool heaterOn = false;
+    if (humidity > 95 && !heaterOn) {
       Serial.println("SHT31 Heater Enabled");
       sht31_set_heater(true);
+      heaterOn = true;
     } else {
       sht31_set_heater(false);
+      heaterOn = false;
     }
   }
 }
