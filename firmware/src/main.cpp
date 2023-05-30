@@ -53,9 +53,9 @@ float humidity = 0;
 double heaterPulseWidth = 0;
 CaptivePortal captivePortal(&server);
 
-float humidityHistory[333] = {0};
+float humidityHistory[999] = {0};
 float temperatureHistory[999] = {0};
-unsigned long humidityTimeHistory[333] = {0};
+unsigned long humidityTimeHistory[999] = {0};
 unsigned long temperatureTimeHistory[999] = {0};
 int humidityHistoryIndex = 0;
 int temperatureHistoryIndex = 0;
