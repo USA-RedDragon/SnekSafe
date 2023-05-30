@@ -406,6 +406,37 @@
       </Card>
       <br />
       <Card>
+        <template #title>Firmware Update</template>
+        <template #content>
+          <div class="flex align-items-center">
+              <Checkbox v-model="enableFirmware" inputId="enableFirmware" name="enableFirmware" binary />
+              <label for="enableFirmware" class="ml-2">
+                I know what I am doing and want to manually upload a firmware file
+            </label>
+          </div>
+          <div v-if="enableFirmware">
+            <br />
+            <!-- Dropdown for firmware or frontend -->
+            <Dropdown
+              v-model="firmwareUpdateType"
+              :options="['Firmware', 'Frontend']"
+              placeholder="Choose update type"
+            />
+            <br />
+            <br />
+            <FileUpload
+              mode="basic"
+              customUpload
+              :disabled="!firmwareUpdateType"
+              :name="firmwareUpdateType.toLowerCase()"
+              accept=".bin"
+              :maxFileSize="1500000"
+              @uploader="uploadFirmware" />
+          </div>
+        </template>
+      </Card>
+      <br />
+      <Card>
         <template #title>Reset to Defaults</template>
         <template #content>
           <p>Reset all settings to their default values.</p>
@@ -432,10 +463,12 @@
 <script>
 import Card from 'primevue/card';
 import Calendar from 'primevue/calendar';
+import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
+import FileUpload from 'primevue/fileupload';
 
 import moment from 'moment';
 
@@ -448,10 +481,12 @@ export default {
   components: {
     Card,
     Calendar,
+    Checkbox,
     InputText,
     PVButton: Button,
     Dropdown,
     Slider,
+    FileUpload,
   },
   setup: () => ({ v$: useVuelidate() }),
   created() {},
@@ -485,6 +520,8 @@ export default {
       scanTimer: null,
       turnOffTime: null,
       turnOnTime: null,
+      enableFirmware: false,
+      firmwareUpdateType: '',
     };
   },
   validations() {
@@ -553,6 +590,44 @@ export default {
     },
   },
   methods: {
+    uploadFirmware(event) {
+      const file = event.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', file.name);
+      console.log(event.files[0]);
+      console.log(formData);
+      // Upload the file to the server
+      API.post('/upload/' + this.firmwareUpdateType.toLowerCase(), formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then((response) => {
+        if (response.data && response.data.status != 'error') {
+          this.$toast.add({
+            summary: 'Success',
+            severity: 'success',
+            detail: response.data.message,
+            life: 3000,
+          });
+        } else {
+          this.$toast.add({
+            summary: 'Error',
+            severity: 'error',
+            detail: 'An unknown error occurred',
+            life: 3000,
+          });
+        }
+      }).catch((error) => {
+        console.log(error);
+        this.$toast.add({
+          summary: 'Success',
+          severity: 'error',
+          detail: 'Error uploading firmware: ' + error,
+          life: 3000,
+        });
+      });
+    },
     getSettings() {
       API.get('/settings')
         .then((response) => {
