@@ -1,38 +1,7 @@
 name: Build Firmware
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
-  push:
-    branches:
-    - main
-    paths-ignore:
-    - enclosure/**
-    - frontend/**
-    - gerbers/**
-    - kicad/**
-    - pics/**
-    - pdfs/**
-    - .gitattributes
-    - .gitignore
-    - '**/*.md'
-    - '**/*.csv'
-    - '!.github/workflows/build-firmware.yaml'
-  pull_request:
-    paths-ignore:
-    - enclosure/**
-    - frontend/**
-    - gerbers/**
-    - kicad/**
-    - pics/**
-    - pdfs/**
-    - .gitattributes
-    - .gitignore
-    - '**/*.md'
-    - '**/*.csv'
-    - '!.github/workflows/build-firmware.yaml'
+  workflow_call:
 
 jobs:
   build-frontend:
@@ -73,6 +42,8 @@ jobs:
         - esp32dev
 
     steps:
+    - uses: actions/checkout@v3
+
     - uses: actions/cache@v3
       with:
         path: |
@@ -87,8 +58,6 @@ jobs:
 
     - name: Install PlatformIO Core
       run: pip install --upgrade platformio
-
-    - uses: actions/checkout@v3
 
     - name: Copy built frontend
       uses: actions/download-artifact@v3
@@ -121,7 +90,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-${{ github.run_number }}-firmware.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-${{ github.run_number }}-firmware.bin
         path: firmware/.pio/build/${{ matrix.platform }}/firmware.bin
         if-no-files-found: error
         retention-days: 1
