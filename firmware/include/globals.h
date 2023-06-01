@@ -1,8 +1,11 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
+#include <stdint.h>
+
 #include <ESPAsyncWebServer.h>
 #include <ESP32Time.h>
+#include <WiFiClientSecure.h>
 
 #include "captive_portal.h"
 
@@ -27,5 +30,9 @@ extern int temperatureHistoryIndex;
 
 extern AsyncEventSource events;
 extern CaptivePortal captivePortal;
+
+extern const uint8_t rootca_crt_bundle_start[] asm("_binary_certs_x509_crt_bundle_bin_start");
+
+extern WiFiClientSecure httpsClient;
 
 #endif

@@ -3,6 +3,7 @@
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <FireTimer.h>
+#include <WiFiClientSecure.h>
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
@@ -24,6 +25,7 @@
 // File globals
 settings_t settings;
 AsyncWebServer server(80);
+WiFiClientSecure httpsClient;
 AsyncEventSource events("/events");
 float stagedTemperature = 0;
 
@@ -85,6 +87,8 @@ void setup() {
     ESP.restart();
     return;
   }
+
+  httpsClient.setCACertBundle(rootca_crt_bundle_start);
 
   ota_setup(&server, &captivePortal, &pidController);
 
