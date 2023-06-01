@@ -1,0 +1,39 @@
+name: Firmware Build Check
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+    - enclosure/**
+    - frontend/**
+    - gerbers/**
+    - kicad/**
+    - pics/**
+    - pdfs/**
+    - .gitattributes
+    - .gitignore
+    - '**/*.md'
+    - '**/*.csv'
+    - '!.github/workflows/build-firmware.yaml'
+  pull_request:
+    paths-ignore:
+    - enclosure/**
+    - frontend/**
+    - gerbers/**
+    - kicad/**
+    - pics/**
+    - pdfs/**
+    - .gitattributes
+    - .gitignore
+    - '**/*.md'
+    - '**/*.csv'
+    - '!.github/workflows/build-firmware.yaml'
+
+jobs:
+  build-firmware:
+    uses: ./.github/workflows/build-firmware.yaml
