@@ -1,0 +1,17 @@
+name: Firmware Build Check
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    paths:
+    - firmware/**
+    - .github/workflows/build-firmware.yaml
+    - .github/workflows/pr-firmware.yaml
+  pull_request:
+
+jobs:
+  build-firmware:
+    uses: ./.github/workflows/reusable-build-firmware.yaml

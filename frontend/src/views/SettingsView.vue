@@ -641,7 +641,8 @@ export default {
           this.turnOnTime = moment().utc().hour(response.data.lightOnHour).minute(response.data.lightOnMinute).toDate();
           this.lightOffHour = response.data.lightOffHour;
           this.lightOffMinute = response.data.lightOffMinute;
-          this.turnOffTime = moment().utc().hour(response.data.lightOffHour).minute(response.data.lightOffMinute).toDate();
+          this.turnOffTime = moment().utc()
+            .hour(response.data.lightOffHour).minute(response.data.lightOffMinute).toDate();
           this.wifiSSID = response.data.wifiSSID;
           this.mdnsName = response.data.mdnsName;
           this.pGain = response.data.pGain;
