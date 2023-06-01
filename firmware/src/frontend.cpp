@@ -24,6 +24,13 @@ void frontend_setup(AsyncWebServer* server) {
     server->onNotFound([](AsyncWebServerRequest *request){
         if (request->method() == HTTP_OPTIONS) {
             request->send(200);
+        } else if (request->url().endsWith(".js") || request->url().endsWith(".css") || request->url().endsWith(".mjs") || request->url().endsWith(".json")) {
+            if (LittleFS.exists(request->url() + ".gz")) {
+                auto response = request->beginResponse(LittleFS, request->url() + ".gz", "application/javascript", true);
+                response->addHeader("Content-Encoding", "gzip");
+                request->send(response);
+                return;
+            }
         } else if (request->url().startsWith("/api")) {
             request->send(404);
         } else {
