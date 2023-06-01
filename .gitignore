@@ -1,3 +1,4 @@
 # Kicad Ingores
 *.bak
 sneksafe-backups/
+eslint_report.json
