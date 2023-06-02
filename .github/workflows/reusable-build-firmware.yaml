@@ -81,7 +81,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-${{ github.run_number }}-frontend.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
         path: firmware/.pio/build/${{ matrix.platform }}/littlefs.bin
         if-no-files-found: error
         retention-days: 1
@@ -93,7 +93,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-${{ github.run_number }}-firmware.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
         path: firmware/.pio/build/${{ matrix.platform }}/firmware.bin
         if-no-files-found: error
         retention-days: 1
