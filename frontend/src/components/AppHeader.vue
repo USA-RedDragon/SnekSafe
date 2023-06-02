@@ -7,6 +7,7 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/settings">Settings</RouterLink>
+        <RouterLink to="/updates">Updates</RouterLink>
       </nav>
     </div>
   </header>

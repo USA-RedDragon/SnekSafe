@@ -432,6 +432,37 @@
               accept=".bin"
               :maxFileSize="1500000"
               @uploader="uploadFirmware" />
+              <br />
+              <span class="p-float-label">
+                <InputText
+                  id="firmware_url"
+                  type="url"
+                  v-model="firmwareURL"
+                />
+                <label
+                  for="firmware_url"
+                  >Firmware URL</label
+                >
+              </span>
+              <br />
+              <div class="flex align-items-center">
+                <Checkbox v-model="restartAfterUpdate" inputId="restartAfterUpdate" name="restartAfterUpdate" binary />
+                <label for="restartAfterUpdate" class="ml-2">
+                  Restart after update
+                </label>
+              </div>
+              <br />
+              <PVButton
+                class="p-button-raised p-button-rounded"
+                label="Update from URL"
+                @click="updateFromURL"
+                :disabled="!!!firmwareURL || !firmwareUpdateType">
+                <template #icon>
+                  <span style="padding-right: 0.5em;">
+                    <font-awesome-icon icon="fa-regular fa-floppy-disk" />
+                  </span>
+                </template>
+              </PVButton>
           </div>
         </template>
       </Card>
@@ -522,6 +553,8 @@ export default {
       turnOnTime: null,
       enableFirmware: false,
       firmwareUpdateType: '',
+      firmwareURL: '',
+      restartAfterUpdate: true,
     };
   },
   validations() {
@@ -590,6 +623,34 @@ export default {
     },
   },
   methods: {
+    updateFromURL(event) {
+      this.$toast.add({
+        summary: 'Firmware Update Started',
+        severity: 'info',
+        detail: 'The firmware update has started. Please wait for the update to complete.',
+        life: 3000,
+      });
+      API.post('/ota/web', {
+        binary_url: this.firmwareURL,
+        type: this.firmwareUpdateType.toLowerCase(),
+        restart: this.restartAfterUpdate,
+      }).then((res) => {
+        this.$toast.add({
+          summary: 'Firmware Update Complete',
+          severity: 'success',
+          detail: 'The firmware update has completed. The SnekSafe will now restart.',
+          life: 3000,
+        });
+      }).catch((err) => {
+        this.$toast.add({
+          summary: 'Error Updating Firmware',
+          severity: 'error',
+          detail: 'There was an error updating the firmware.',
+          life: 3000,
+        });
+        console.error(err);
+      });
+    },
     uploadFirmware(event) {
       const file = event.files[0];
       const formData = new FormData();
