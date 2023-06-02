@@ -22,13 +22,13 @@ int compareSemver(const char* version1, const char* version2) {
   sscanf(version2, "%d.%d.%d", &major2, &minor2, &patch2);
 
   // Compare major, minor, and patch versions
-  if (major1 > major2) {
+  if (major1 < major2) {
     return 1; // Major upgrade
   } else if (major1 == major2) {
-    if (minor1 > minor2) {
+    if (minor1 < minor2) {
       return 2; // Minor upgrade
     } else if (minor1 == minor2) {
-      if (patch1 > patch2) {
+      if (patch1 < patch2) {
         return 3; // Patch upgrade
       } else if (patch1 == patch2) {
         return 0; // No upgrade
@@ -39,7 +39,7 @@ int compareSemver(const char* version1, const char* version2) {
   return -1; // Invalid or downgraded version
 }
 
-bool downloadAndApplyUpdate(const char* url, BinaryType type) {
+bool downloadAndApplyUpdate(const char* url, BinaryType type, bool restart=true) {
     HTTPClient https;
     https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
 
@@ -97,7 +97,9 @@ bool downloadAndApplyUpdate(const char* url, BinaryType type) {
                     Serial.printf("Update Success: %u\nRebooting...\n", written);
                     delay(100);
                     https.end();
-                    ESP.restart();
+                    if (restart) {
+                        ESP.restart();
+                    }
                     return true;
                 } else {
                     Update.printError(Serial);
@@ -192,7 +194,10 @@ void ota_check_for_update() {
 
         if (strncmp(target_commitish, GIT_COMMIT, 7) != 0) {
           Serial.println("Different git commit");
-          // Iterate over assets
+          bool frontendFound = false;
+          bool firmwareFound = false;
+          String frontendUrl;
+          String firmwareUrl;
           for (JsonVariant asset : doc["assets"].as<JsonArray>()) {
             String name = asset["name"];
 
@@ -205,20 +210,23 @@ void ota_check_for_update() {
               String version = name.substring(15, name.length() - 13);
               Serial.printf("version: %s\n", version.c_str());
 
-              // Check if the frontend is newer than the current FRONTEND_VERSION
+              // Check if the frontend is newer than the current VERSION
               // versions use semantic versioning: <major>.<minor>.<patch>
-              switch (compareSemver(FRONTEND_VERSION, version.c_str())) {
+              switch (compareSemver(VERSION, version.c_str())) {
                 case 1:
-                  Serial.println("Major upgrade");
+                  Serial.println("Major upgrade, not auto-updating");
                   break;
                 case 2:
-                  Serial.println("Minor upgrade");
+                  Serial.println("Minor upgrade, updating");
+                  frontendFound = true;
                   break;
                 case 3:
-                  Serial.println("Patch upgrade");
+                  Serial.println("Patch upgrade, updating");
+                  frontendFound = true;
                   break;
                 case 0:
-                  Serial.println("No upgrade");
+                  Serial.println("Git commit different, but version is the same, updating");
+                  frontendFound = true;
                   break;
                 case -1:
                   Serial.println("Invalid or downgraded version");
@@ -227,8 +235,9 @@ void ota_check_for_update() {
                   Serial.println("Unknown upgrade type");
                   break;
               }
-
-              // downloadAndApplyUpdate(asset["browser_download_url"], TYPE_FRONTEND);
+              if (frontendFound) {
+                frontendUrl = url;
+              }
             } else if (name.startsWith("SnekSafe-esp32-") && name.endsWith("-firmware.bin")) {
               Serial.println("Found firmware update");
               String url = asset["browser_download_url"];
@@ -241,16 +250,19 @@ void ota_check_for_update() {
               // versions use semantic versioning: <major>.<minor>.<patch>
               switch (compareSemver(VERSION, version.c_str())) {
                 case 1:
-                  Serial.println("Major upgrade");
+                  Serial.println("Major upgrade, not auto-updating");
                   break;
                 case 2:
-                  Serial.println("Minor upgrade");
+                  Serial.println("Minor upgrade, updating");
+                  firmwareFound = true;
                   break;
                 case 3:
-                  Serial.println("Patch upgrade");
+                  Serial.println("Patch upgrade, updating");
+                  firmwareFound = true;
                   break;
                 case 0:
-                  Serial.println("No upgrade");
+                  Serial.println("Git commit different, but version is the same, updating");
+                  firmwareFound = true;
                   break;
                 case -1:
                   Serial.println("Invalid or downgraded version");
@@ -259,8 +271,26 @@ void ota_check_for_update() {
                   Serial.println("Unknown upgrade type");
                   break;
               }
+              if (firmwareFound) {
+                firmwareUrl = url;
+              }
+            }
+          }
 
-              // downloadAndApplyUpdate(asset["browser_download_url"], TYPE_FIRMWARE);
+          if (frontendFound) {
+            server.end();
+            if (!downloadAndApplyUpdate(frontendUrl.c_str(), TYPE_FRONTEND, !firmwareFound)) {
+              Serial.println("Failed to update frontend, restarting");
+              ESP.restart();
+            }
+          }
+          if (firmwareFound) {
+            if (!downloadAndApplyUpdate(firmwareUrl.c_str(), TYPE_FIRMWARE)) {
+              Serial.println("Failed to update firmware, restarting");
+              ESP.restart();
+            } else {
+              Serial.println("Firmware updated, restarting");
+              ESP.restart();
             }
           }
         } else {

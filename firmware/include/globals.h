@@ -34,5 +34,6 @@ extern CaptivePortal captivePortal;
 extern const uint8_t rootca_crt_bundle_start[] asm("_binary_certs_x509_crt_bundle_bin_start");
 
 extern WiFiClientSecure httpsClient;
+extern AsyncWebServer server;
 
 #endif

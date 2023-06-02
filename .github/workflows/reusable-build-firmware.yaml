@@ -70,7 +70,6 @@ jobs:
 
     - name: Set Versions
       run: |
-        echo "FRONTEND_VERSION=$(cat frontend/package.json | jq -r .version)" >> $GITHUB_OUTPUT
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
       id: versions
 
@@ -81,7 +80,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-frontend.bin
         path: firmware/.pio/build/${{ matrix.platform }}/littlefs.bin
         if-no-files-found: error
         retention-days: 1

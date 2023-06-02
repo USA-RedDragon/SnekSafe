@@ -24,7 +24,6 @@
 
 // File globals
 settings_t settings;
-AsyncWebServer server(80);
 WiFiClientSecure httpsClient;
 AsyncEventSource events("/events");
 float stagedTemperature = 0;
@@ -47,6 +46,7 @@ FireTimer timer100ms;
 FireTimer timer500ms;
 
 // Program-wide globals
+AsyncWebServer server(80);
 bool lightState = false;
 unsigned long lastUpdate = 0;
 bool wifi_changed = false;

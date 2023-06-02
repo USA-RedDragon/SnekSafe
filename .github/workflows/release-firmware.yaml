@@ -22,7 +22,6 @@ jobs:
 
     - name: Set Versions
       run: |
-        echo "FRONTEND_VERSION=$(cat frontend/package.json | jq -r .version)" >> $GITHUB_OUTPUT
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
       id: versions
 
@@ -33,7 +32,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.versions.outputs.FIRMWARE_VERSION }}
-        release_name: "SnekSafe FW ${{ steps.versions.outputs.FIRMWARE_VERSION }}, FE v${{ steps.versions.outputs.FRONTEND_VERSION }}"
+        release_name: "SnekSafe ${{ steps.versions.outputs.FIRMWARE_VERSION }}"
         draft: false
         prerelease: false
 
@@ -67,7 +66,6 @@ jobs:
 
     - name: Set Versions
       run: |
-        echo "FRONTEND_VERSION=$(cat frontend/package.json | jq -r .version)" >> $GITHUB_OUTPUT
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
         echo "UPLOAD_URL=$(cat upload_url)" >> $GITHUB_OUTPUT
       id: versions
@@ -75,7 +73,7 @@ jobs:
     - name: Copy built frontend
       uses: actions/download-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-frontend.bin
 
     - name: Copy built firmware
       uses: actions/download-artifact@v3
@@ -99,5 +97,5 @@ jobs:
       with:
         upload_url: ${{ steps.versions.outputs.UPLOAD_URL }}
         asset_path: littlefs.bin
-        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
+        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-frontend.bin
         asset_content_type: application/octet-stream
