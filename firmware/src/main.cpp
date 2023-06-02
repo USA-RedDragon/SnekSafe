@@ -118,7 +118,10 @@ void setup() {
   if (!wifi_connect(&settings)) {
     Serial.println("Wifi not connected.");
   } else {
-    // Only update the light if we have a valid time after 1/1/2023
+#ifndef DEV
+    ota_check_for_update();
+#endif
+    // Only update the light if we have a valid time
     if (rtc.getEpoch() != 0) {
       if (rtc.getMinute() >= settings.lightOnMinute && rtc.getHour(true) >= settings.lightOnHour
         && rtc.getMinute() <= settings.lightOffMinute && rtc.getHour(true) <= settings.lightOffHour) {

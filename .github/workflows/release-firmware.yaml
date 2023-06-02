@@ -32,8 +32,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.versions.outputs.FIRMWARE_VERSION }}-${{ github.run_number }}
-        release_name: "SnekSafe FW ${{ steps.versions.outputs.FIRMWARE_VERSION }}, FE v${{ steps.versions.outputs.FRONTEND_VERSION }} Build #${{ github.run_number }}"
+        tag_name: ${{ steps.versions.outputs.FIRMWARE_VERSION }}
+        release_name: "SnekSafe FW ${{ steps.versions.outputs.FIRMWARE_VERSION }}, FE v${{ steps.versions.outputs.FRONTEND_VERSION }}"
         draft: false
         prerelease: false
 
@@ -56,7 +56,6 @@ jobs:
       matrix:
         platform:
         - esp32
-        - esp32dev
 
     steps:
     - uses: actions/checkout@v3
@@ -76,12 +75,12 @@ jobs:
     - name: Copy built frontend
       uses: actions/download-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-${{ github.run_number }}-frontend.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
 
     - name: Copy built firmware
       uses: actions/download-artifact@v3
       with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-${{ github.run_number }}-firmware.bin
+        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
 
     - name: Upload Firmware
       uses: actions/upload-release-asset@v1
@@ -90,7 +89,7 @@ jobs:
       with:
         upload_url: ${{ steps.versions.outputs.UPLOAD_URL }}
         asset_path: firmware.bin
-        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-${{ github.run_number }}-firmware.bin
+        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
         asset_content_type: application/octet-stream
 
     - name: Upload Frontend
@@ -100,5 +99,5 @@ jobs:
       with:
         upload_url: ${{ steps.versions.outputs.UPLOAD_URL }}
         asset_path: littlefs.bin
-        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-${{ github.run_number }}-frontend.bin
+        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FRONTEND_VERSION }}-frontend.bin
         asset_content_type: application/octet-stream
