@@ -18,7 +18,7 @@ import './assets/themes/md-dark-indigo/theme.css';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faFireFlameCurved, faWifi, faSpinner, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faFireFlameCurved, faWifi, faSpinner, faCircleExclamation, faUpload, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faLightbulb, faFloppyDisk } from '@fortawesome/free-regular-svg-icons';
 
 /* add icons to the library */
@@ -26,6 +26,9 @@ library.add(faFireFlameCurved);
 library.add(faWifi);
 library.add(faSpinner);
 library.add(faCircleExclamation);
+library.add(faUpload);
+library.add(faRotateRight);
+
 library.add(faLightbulb);
 library.add(faFloppyDisk);
 

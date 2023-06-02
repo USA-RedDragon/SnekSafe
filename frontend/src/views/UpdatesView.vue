@@ -18,7 +18,7 @@
               :disabled="checkingForUpdates || !!!version">
               <template #icon>
                 <span style="padding-right: 0.5em;">
-                  <font-awesome-icon icon="fa-solid fa-wifi" />
+                  <font-awesome-icon icon="fa-solid fa-rotate-right" />
                 </span>
               </template>
             </PVButton>
@@ -31,7 +31,7 @@
               :disabled="!!!firmwareUpdateURL && !!!frontendUpdateURL">
               <template #icon>
                 <span style="padding-right: 0.5em;">
-                  <font-awesome-icon icon="fa-regular fa-floppy-disk" />
+                  <font-awesome-icon icon="fa-solid fa-upload" />
                 </span>
               </template>
             </PVButton>
