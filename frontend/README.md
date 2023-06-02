@@ -2,7 +2,6 @@
 
 ## TODOs
 
-- Add time selection to settings for light on/off time
 - Add firmware update page
 
 ## Recommended IDE Setup
