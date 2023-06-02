@@ -44,6 +44,7 @@ FireTimer timer10s;
 FireTimer timer10ms;
 FireTimer timer100ms;
 FireTimer timer500ms;
+FireTimer timer30m;
 
 // Program-wide globals
 AsyncWebServer server(80);
@@ -143,6 +144,7 @@ void setup() {
     }
   }
 
+  timer30m.begin(1000 * 60 * 30);
   timer1m.begin(1000 * 60);
   timer10s.begin(1000 * 10);
   timer500ms.begin(500);
@@ -299,5 +301,9 @@ void loop() {
       sht31_set_heater(false);
       heaterOn = false;
     }
+  }
+
+  if (timer30m.fire() && WiFi.status() == WL_CONNECTED) {
+    ota_check_for_update();
   }
 }
