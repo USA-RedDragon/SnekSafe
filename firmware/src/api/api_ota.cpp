@@ -1,8 +1,72 @@
+#include <AsyncJson.h>
 #include <Update.h>
 
 #include "api.h"
+#include "ota.h"
 
 void api_ota_setup(AsyncWebServer* server, settings_t* settings) {
+    AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/api/v1/ota/web", [](AsyncWebServerRequest *request, JsonVariant &json) {
+        if (request->method() != HTTP_POST) {
+            request->send(405, "text/plain", "Method Not Allowed");
+            return;
+        }
+        AsyncJsonResponse* response = new AsyncJsonResponse();
+        const JsonObject& root = response->getRoot();
+        const JsonObject& body = json.as<JsonObject>();
+
+        bool restart = true;
+        if (request->hasParam("restart")) {
+            restart = request->getParam("restart")->value().equals("true");
+        }
+
+        if (!body.containsKey("binary_url")) {
+            root["status"] = "error";
+            root["message"] = "Must provide binary_url";
+            response->setCode(400);
+            response->setLength();
+            request->send(response);
+            return;
+        }
+
+        if (!body.containsKey("type")) {
+            root["status"] = "error";
+            root["message"] = "Type must be one of firmware or frontend";
+            response->setCode(400);
+            response->setLength();
+            request->send(response);
+            return;
+        }
+
+        const char* binary_url = body["binary_url"];
+        const char* type = body["type"];
+
+        if (strcmp(type, "firmware") != 0 && strcmp(type, "frontend") != 0) {
+            root["status"] = "error";
+            root["message"] = "Type must be one of firmware or frontend";
+            response->setCode(400);
+            response->setLength();
+            request->send(response);
+            return;
+        }
+
+        BinaryType binary_type = TYPE_FIRMWARE;
+        if (strcmp(type, "frontend") == 0) {
+            binary_type = TYPE_FRONTEND;
+        }
+
+        root["status"] = "ok";
+        root["message"] = "Update started";
+        response->setCode(200);
+
+        firmwareUpdateURL = binary_url;
+        firmwareUpdateFlag = true;
+        firmwareUpdateReboot = restart;
+
+        response->setLength();
+        request->send(response);
+    });
+    server->addHandler(handler);
+
     server->onFileUpload([] (AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
         if (request->method() != HTTP_POST) {
             request->send(405, "text/plain", "Method Not Allowed");

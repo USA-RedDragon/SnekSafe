@@ -62,6 +62,11 @@ unsigned long temperatureTimeHistory[999] = {0};
 int humidityHistoryIndex = 0;
 int temperatureHistoryIndex = 0;
 
+String firmwareUpdateURL;
+BinaryType firmwareUpdateType;
+bool firmwareUpdateFlag = false;
+bool firmwareUpdateReboot = true;
+
 void setup() {
   pinMode(HEATER_PIN, OUTPUT);
   pinMode(LIGHT_PIN, OUTPUT);
@@ -153,6 +158,13 @@ void loop() {
   analogWrite(HEATER_PIN, heaterPulseWidth);
 
   wifi_tick();
+
+  if (firmwareUpdateFlag) {
+    firmwareUpdateFlag = false;
+    ota_download_and_apply_update(firmwareUpdateURL.c_str(), firmwareUpdateType, firmwareUpdateReboot);
+    firmwareUpdateURL = "";
+    firmwareUpdateReboot = true;
+  }
 
   if (wifi_changed) {
     wifi_changed = false;

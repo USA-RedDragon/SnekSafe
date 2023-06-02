@@ -7,11 +7,7 @@
 #include "globals.h"
 #include "pid.hpp"
 
-enum BinaryType {
-    TYPE_FIRMWARE,
-    TYPE_FRONTEND,
-};
-
+bool ota_download_and_apply_update(const char* url, BinaryType type, bool restart=true);
 void ota_setup(AsyncWebServer* server, CaptivePortal* captivePortal, PID* pidController);
 void ota_check_for_update();
 

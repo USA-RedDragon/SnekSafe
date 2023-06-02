@@ -9,6 +9,11 @@
 
 #include "captive_portal.h"
 
+enum BinaryType {
+    TYPE_FIRMWARE,
+    TYPE_FRONTEND,
+};
+
 extern bool lightState;
 extern bool wifi_changed;
 extern ESP32Time rtc;
@@ -35,5 +40,10 @@ extern const uint8_t rootca_crt_bundle_start[] asm("_binary_certs_x509_crt_bundl
 
 extern WiFiClientSecure httpsClient;
 extern AsyncWebServer server;
+
+extern String firmwareUpdateURL;
+extern BinaryType firmwareUpdateType;
+extern bool firmwareUpdateFlag;
+extern bool firmwareUpdateReboot;
 
 #endif

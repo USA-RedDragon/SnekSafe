@@ -39,7 +39,7 @@ int compareSemver(const char* version1, const char* version2) {
   return -1; // Invalid or downgraded version
 }
 
-bool downloadAndApplyUpdate(const char* url, BinaryType type, bool restart=true) {
+bool ota_download_and_apply_update(const char* url, BinaryType type, bool restart) {
     HTTPClient https;
     https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
 
@@ -94,11 +94,12 @@ bool downloadAndApplyUpdate(const char* url, BinaryType type, bool restart=true)
                 Serial.println("Progress: 100%%");
                 Serial.println("Download complete");
                 if (Update.end()) {
-                    Serial.printf("Update Success: %u\nRebooting...\n", written);
+                    Serial.printf("Update Success: %u\n", written);
                     delay(100);
                     https.end();
                     if (restart) {
-                        ESP.restart();
+                      Serial.println("Restarting...");
+                      ESP.restart();
                     }
                     return true;
                 } else {
@@ -279,13 +280,13 @@ void ota_check_for_update() {
 
           if (frontendFound) {
             server.end();
-            if (!downloadAndApplyUpdate(frontendUrl.c_str(), TYPE_FRONTEND, !firmwareFound)) {
+            if (!ota_download_and_apply_update(frontendUrl.c_str(), TYPE_FRONTEND, !firmwareFound)) {
               Serial.println("Failed to update frontend, restarting");
               ESP.restart();
             }
           }
           if (firmwareFound) {
-            if (!downloadAndApplyUpdate(firmwareUrl.c_str(), TYPE_FIRMWARE)) {
+            if (!ota_download_and_apply_update(firmwareUrl.c_str(), TYPE_FIRMWARE)) {
               Serial.println("Failed to update firmware, restarting");
               ESP.restart();
             } else {
