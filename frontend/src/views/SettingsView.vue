@@ -623,7 +623,7 @@ export default {
     },
   },
   methods: {
-    updateFromURL(event) {
+    updateFromURL(_event) {
       this.$toast.add({
         summary: 'Firmware Update Started',
         severity: 'info',
@@ -634,7 +634,7 @@ export default {
         binary_url: this.firmwareURL,
         type: this.firmwareUpdateType.toLowerCase(),
         restart: this.restartAfterUpdate,
-      }).then((res) => {
+      }).then((_res) => {
         this.$toast.add({
           summary: 'Firmware Update Complete',
           severity: 'success',

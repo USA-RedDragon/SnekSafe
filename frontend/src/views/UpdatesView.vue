@@ -94,7 +94,7 @@ export default {
         binary_url: this.frontendUpdateURL,
         type: 'frontend',
         restart: false,
-      }).then((res) => {
+      }).then((_res) => {
         this.$toast.add({
           summary: 'Frontend Update Complete',
           severity: 'success',
@@ -104,7 +104,7 @@ export default {
         API.post('/ota/web', {
           binary_url: this.firmwareUpdateURL,
           type: 'firmware',
-        }).then((res) => {
+        }).then((_res) => {
           this.$toast.add({
             summary: 'Firmware Update Complete',
             severity: 'success',
