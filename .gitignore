@@ -2,3 +2,5 @@
 *.bak
 sneksafe-backups/
 eslint_report.json
+\#auto_saved_files\#
+
