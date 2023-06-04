@@ -1,0 +1,39 @@
+name: KiBot
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'kicad/**'
+    - '.github/workflows/kibot.yaml'
+  pull_request:
+    paths:
+    - 'kicad/**'
+    - '.github/workflows/kibot.yaml'
+
+jobs:
+  kibot:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache 3D models data
+      id: models-cache
+      uses: set-soft/cache@main
+      with:
+        path: ~/cache_3d
+        key: cache_3d
+    - name: KiBot
+      uses: INTI-CMNB/KiBot@v2_k7
+      with:
+        config: kicad/config.kibot.yaml
+        schema: kicad/sneksafe.kicad_sch
+        board: kicad/sneksafe.kicad_pcb
+        cache3D: YES
+        dir: Generated
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        name: KiBot
+        path: Generated
