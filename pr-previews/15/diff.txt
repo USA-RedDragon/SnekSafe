@@ -1,4 +1,11 @@
-143a144,145
+648c648
+<     (fp_text reference "J2" (at 15.6 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J2" (at 14.6 2.25 90) (layer "F.SilkS")
+3663c3663
+<     (fp_text reference "J3" (at 6.355 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J3" (at 6.355 2.9 90) (layer "F.SilkS")143a144,145
 >     (property "Amazon Link" "")
 >     (property "Digikey Link" "https://www.digikey.com/en/products/detail/panasonic-electronic-components/ERA-8AEB242V/3070902")
 145a148
@@ -62,6 +69,10 @@
 >     (property "Mouser Link" "https://www.mouser.com/ProductDetail/651-1713969")
 629d640
 <     (property "Product Link" "https://www.mouser.com/ProductDetail/651-1713969")
+637c648
+<     (fp_text reference "J2" (at 15.6 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J2" (at 14.6 2.25 90) (layer "F.SilkS")
 705,706c716,718
 <     (property "Height" "22")
 <     (property "Manufacturer_Name" "RECOMPower")
@@ -211,6 +222,10 @@
 >     (property "Mouser Link" "https://www.mouser.com/ProductDetail/651-1714968")
 3634d3655
 <     (property "Product Link" "https://www.mouser.com/ProductDetail/651-1714968")
+3642c3663
+<     (fp_text reference "J3" (at 6.355 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J3" (at 6.355 2.9 90) (layer "F.SilkS")
 3708,3709c3729,3731
 <     (property "Height" "20.701")
 <     (property "Manufacturer_Name" "Littelfuse")
@@ -665,6 +680,10 @@
 <     (property "Product Link" "https://www.mouser.com/ProductDetail/651-1713969")
 513a643
 >     (property "Sim.Enable" "0")
+518c648
+<     (fp_text reference "J2" (at 15.6 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J2" (at 14.6 2.25 90) (layer "F.SilkS")
 520c650
 <       (tstamp 4cb621c8-3839-4587-bbef-08393b5a3434)
 ---
@@ -1061,6 +1080,10 @@
 <     (property "Product Link" "https://www.mouser.com/ProductDetail/651-1714968")
 3481a3658
 >     (property "Sim.Enable" "0")
+3486c3663
+<     (fp_text reference "J3" (at 6.355 1.65 90) (layer "F.SilkS")
+---
+>     (fp_text reference "J3" (at 6.355 2.9 90) (layer "F.SilkS")
 3537c3714
 <       (net 37 "Earth") (pinfunction "Pin_2") (pintype "passive") (tstamp 76b50f26-aac4-4131-9d02-9ed37f98f0f3))
 ---
