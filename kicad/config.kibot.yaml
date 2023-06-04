@@ -6,6 +6,7 @@ global:
   out_dir: Generated
   pcb_finish: ENIG
   restore_project: true
+  allow_blind_buried_vias: false
 
 preflight:
   check_zone_fills: true
