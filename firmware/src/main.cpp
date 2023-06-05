@@ -5,12 +5,8 @@
 #include <FireTimer.h>
 #include <WiFiClientSecure.h>
 
-#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#else
-#include <ESP8266WiFi.h>
-#endif
 
 #include "api.h"
 #include "captive_portal.h"
@@ -20,7 +16,7 @@
 #include "pid.hpp"
 #include "settings.h"
 #include "sht31.h"
-#include "wifi.h"
+#include "mywifi.h"
 
 // File globals
 settings_t settings;

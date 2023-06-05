@@ -1,11 +1,5 @@
-
-
-#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
 #include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
-#else
-#include <ESP8266WiFi.h>
-#endif
 
 #include "captive_portal.h"
 
@@ -29,7 +23,6 @@ const char* knownEndpoints[] = {
     "/kindle-wifi/wifiredirect.html",
 };
 
-#ifdef ARDUINO_ARCH_ESP32
 void ampdu_rx_disable() {
   //ampdu_rx_disable android workaround see https://github.com/espressif/arduino-esp32/issues/4423
   esp_wifi_stop();
@@ -42,7 +35,6 @@ void ampdu_rx_disable() {
   esp_wifi_start(); //Restart WiFi
   delay(100); //this is necessary don't ask me why
 }
-#endif
 
 CaptivePortal::CaptivePortal(AsyncWebServer* webServer) {
     this->webServer = webServer;
@@ -67,9 +59,7 @@ void CaptivePortal::setup(settings_t* settings) {
     this->dnsServer->setTTL(300);
     this->dnsServer->start(53, "*", WiFi.softAPIP());
 
-    #ifdef ARDUINO_ARCH_ESP32
-        ampdu_rx_disable();
-    #endif
+    ampdu_rx_disable();
 
     this->setupKnownEndpoints();
 }

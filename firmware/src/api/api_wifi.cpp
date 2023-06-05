@@ -1,16 +1,11 @@
-#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
 #include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
-#else
-#include <ESP8266mDNS.h>
-#include <ESP8266WiFi.h>
-#endif
 
 #include <AsyncJson.h>
 
 #include "api.h"
 #include "globals.h"
-#include "wifi.h"
+#include "mywifi.h"
 
 void api_wifi_setup(AsyncWebServer* server, settings_t* settings) {
     server->on("/api/v1/wifi/scan", HTTP_POST, [] (AsyncWebServerRequest *request) {

@@ -1,7 +1,7 @@
 import os
 
 Import("env")
-env.Execute("$PYTHONEXE -m pip install cryptography")
+env.Execute("\"$PYTHONEXE\" -m pip install cryptography")
 
 print("Running CA hook")
 try:

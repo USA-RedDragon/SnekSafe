@@ -1,21 +1,16 @@
 #include <Arduino.h>
 
-#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <ESPmDNS.h>
 #include <esp_wifi.h> //Used for mpdu_rx_disable android workaround
-#else
-#include <ESP8266mDNS.h>
-#include <ESP8266WiFi.h>
-#endif
 
 #include <NTPClient.h>
 
 #include <ArduinoOTA.h>
 
 #include "globals.h"
-#include "wifi.h"
+#include "mywifi.h"
 
 WiFiUDP ntpUDP;
 ESP32Time rtc(0);
@@ -39,11 +34,7 @@ bool wifi_connect(settings_t* settings) {
         } else {
             rtc.setTime(timeClient.getEpochTime());
         }
-#ifdef ARDUINO_ARCH_ESP32
         if (!MDNS.begin(settings->mdnsName)) {
-#else
-        if (!MDNS.begin(settings->mdnsName, WiFi.localIP())) {
-#endif
             Serial.println("Error setting up mDNS responder");
         } else {
             if (MDNS.addService("http", "tcp", 80)) {

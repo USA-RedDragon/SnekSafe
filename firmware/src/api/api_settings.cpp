@@ -3,7 +3,7 @@
 #include "api.h"
 #include "globals.h"
 #include "pid.hpp"
-#include "wifi.h"
+#include "mywifi.h"
 
 void api_settings_setup(AsyncWebServer* server, settings_t* settings) {
     server->on("/api/v1/settings", HTTP_GET, [settings] (AsyncWebServerRequest *request) {
