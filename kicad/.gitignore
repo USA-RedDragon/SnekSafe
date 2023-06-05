@@ -1,0 +1,8 @@
+.cache/
+Generated/
+kibot_*.filter
+*-bak
+*-drc.txt
+*-erc.txt
+fp-info-cache
+*.kicad_prl
