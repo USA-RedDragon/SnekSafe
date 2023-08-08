@@ -32,7 +32,7 @@
     "chart.js": "^4.3.3",
     "eslint": "^8.46.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-cypress": "^2.13.3",
+    "eslint-plugin-cypress": "^2.13.4",
     "eslint-plugin-vue": "^9.16.1",
     "jsdom": "^22.1.0",
     "prettier": "^2.8.8",
