@@ -18,7 +18,7 @@ jobs:
     needs: build-firmware
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set Versions
       run: |
@@ -57,7 +57,7 @@ jobs:
         - esp32
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Copy upload url
       uses: actions/download-artifact@v3
