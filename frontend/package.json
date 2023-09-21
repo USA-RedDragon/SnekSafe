@@ -38,7 +38,7 @@
     "prettier": "^3.0.3",
     "sass": "^1.68.0",
     "semver": "^7.5.4",
-    "start-server-and-test": "^2.0.0",
+    "start-server-and-test": "^2.0.1",
     "vite": "^4.4.9",
     "vite-plugin-compression": "^0.5.1"
   }
