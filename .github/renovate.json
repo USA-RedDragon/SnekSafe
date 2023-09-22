@@ -25,5 +25,11 @@
             ],
             "depNameTemplate": "{{#if depNameOverride}}{{{depNameOverride}}}{{else}}{{{depName}}}{{/if}}"
         }
+    ],
+    "packageRules": [
+        {
+            "matchPackageNames": ["INTI-CMNB/KiBot"],
+            "versioning": "regex:v(?<major>\\d+)_k(?<minor>\\d+)$"
+        }
     ]
 }
