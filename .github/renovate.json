@@ -11,7 +11,7 @@
                 "(^|/)firmware\\/platformio\\.ini$"
             ],
             "matchStrings": [
-                "# renovate: v: datasource=(?<datasource>.*?)\\s*?(depName=(?<depNameOverride>.*?))?\\n(platform = )?(?<depName>.+)[@#](?<currentValue>(v?[0-9]+\\.[0-9]+\\.[0-9]+))"
+                "# renovate: v: datasource=(?<datasource>.*?)\\s*?(depName=(?<depNameOverride>.*?))?\\n\\s*?(platform = )?(?<depName>.+)[@#](?<currentValue>(v?[0-9]+\\.[0-9]+\\.[0-9]+))"
             ],
             "extractVersionTemplate": "^v(?<version>.*)$",
             "depNameTemplate": "{{#if depNameOverride}}{{{depNameOverride}}}{{else}}{{{depName}}}{{/if}}"
@@ -21,7 +21,7 @@
                 "(^|/)firmware\\/platformio\\.ini$"
             ],
             "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?)\\s*?(depName=(?<depNameOverride>.*?))?\\n(platform = )?(?<depName>.+)[@#](?<currentValue>(v?[0-9]+\\.[0-9]+\\.[0-9]+))"
+                "# renovate: datasource=(?<datasource>.*?)\\s*?(depName=(?<depNameOverride>.*?))?\\s*?\\n(platform = )?(?<depName>.+)[@#](?<currentValue>(v?[0-9]+\\.[0-9]+\\.[0-9]+))"
             ],
             "depNameTemplate": "{{#if depNameOverride}}{{{depNameOverride}}}{{else}}{{{depName}}}{{/if}}"
         }
