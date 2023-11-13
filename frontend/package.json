@@ -35,7 +35,7 @@
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.18.1",
     "jsdom": "^22.1.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.0",
     "sass": "^1.69.5",
     "semver": "^7.5.4",
     "start-server-and-test": "^2.0.2",
