@@ -198,11 +198,12 @@ void loop() {
 
   // Only update the light if we have a valid time after 1/1/2023
   if (rtc.getEpoch() != 0) {
+    Serial.printf("Time: %02d:%02d:%02d\n", rtc.getHour(true), rtc.getMinute(), rtc.getSecond());
     if (rtc.getMinute() == settings.lightOnMinute && rtc.getHour(true) == settings.lightOnHour) {
       // If we haven't already turned the light on during this minute, turn it on
       if (!lightState) {
         lightState = true;
-        Serial.println("Light On");
+        Serial.printf("Light On at %02d:%02d\n", rtc.getHour(true), rtc.getMinute());
       }
     }
 
@@ -210,7 +211,7 @@ void loop() {
       // If we haven't already turned the light off during this minute, turn it off
       if (lightState) {
         lightState = false;
-        Serial.println("Light Off");
+        Serial.printf("Light Off at %02d:%02d\n", rtc.getHour(true), rtc.getMinute());
       }
     }
   }

@@ -29,9 +29,11 @@ bool wifi_connect(settings_t* settings) {
         timeClient.setTimeOffset(0);
         if (!timeClient.update()) {
             if (timeClient.forceUpdate()) {
+                Serial.println("Forced NTP update");
                 rtc.setTime(timeClient.getEpochTime());
             }
         } else {
+            Serial.println("Non-forced NTP update");
             rtc.setTime(timeClient.getEpochTime());
         }
         if (!MDNS.begin(settings->mdnsName)) {
@@ -52,7 +54,13 @@ void wifi_tick() {
     if (WiFi.status() == WL_CONNECTED) {
         ArduinoOTA.handle();
         if (timeClient.update()) {
+            Serial.println("Non-forced NTP update");
             rtc.setTime(timeClient.getEpochTime());
+        } else {
+            if (timeClient.forceUpdate()) {
+                Serial.println("Forced NTP update");
+                rtc.setTime(timeClient.getEpochTime());
+            }
         }
     }
 }
