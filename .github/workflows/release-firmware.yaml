@@ -16,7 +16,6 @@ env:
 jobs:
   build-firmware:
     runs-on: ubuntu-latest
-    needs: build-firmware
 
     steps:
     - uses: actions/checkout@v4
