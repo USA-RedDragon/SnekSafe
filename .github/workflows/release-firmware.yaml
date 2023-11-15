@@ -9,11 +9,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # renovate: datasource=github-releases depName=esphome/esphome
+  ESPHOME_VERSION: 2023.11.0
+
 jobs:
   build-firmware:
-    uses: ./.github/workflows/reusable-build-firmware.yaml
-
-  create-release:
     runs-on: ubuntu-latest
     needs: build-firmware
 
@@ -24,6 +25,11 @@ jobs:
       run: |
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
       id: versions
+
+    - uses: esphome/build-action@v1.8.0
+      with:
+        yaml_file: firmware/sneksafe.esphome.yaml
+        version: ${{ env.ESPHOME_VERSION }}
 
     - name: Create Release
       id: create_release
@@ -36,66 +42,22 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Save release upload url to artifacts
-      run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > upload_url
-
-    - uses: actions/upload-artifact@v3
-      with:
-        name: upload_url
-        path: upload_url
-        if-no-files-found: error
-        retention-days: 1
-
-  upload-release:
-    runs-on: ubuntu-latest
-    needs: create-release
-
-    strategy:
-      matrix:
-        platform:
-        - esp32
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Copy upload url
-      uses: actions/download-artifact@v3
-      with:
-        name: upload_url
-
-    - name: Set Versions
-      run: |
-        echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
-        echo "UPLOAD_URL=$(cat upload_url)" >> $GITHUB_OUTPUT
-      id: versions
-
-    - name: Copy built frontend
-      uses: actions/download-artifact@v3
-      with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-frontend.bin
-
-    - name: Copy built firmware
-      uses: actions/download-artifact@v3
-      with:
-        name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
-
     - name: Upload Firmware
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.versions.outputs.UPLOAD_URL }}
-        asset_path: firmware.bin
-        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.create_release.outputs.name }}.bin
+        asset_name: SnekSafe-esp32-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
         asset_content_type: application/octet-stream
 
-    - name: Upload Frontend
+    - name: Upload Manifest
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.versions.outputs.UPLOAD_URL }}
-        asset_path: littlefs.bin
-        asset_name: SnekSafe-${{ matrix.platform }}-${{ steps.versions.outputs.FIRMWARE_VERSION }}-frontend.bin
-        asset_content_type: application/octet-stream
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: manifest.json
+        asset_name: SnekSafe-esp32-${{ steps.versions.outputs.FIRMWARE_VERSION }}-manifest.json
+        asset_content_type: application/json

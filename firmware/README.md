@@ -1,3 +1,3 @@
 # SnekSafe Firmware
 
-This firmware embeds the frontend and serves it via a captive portal.
+This firmware uses [ESPHome](https://github.com/esphome/esphome).

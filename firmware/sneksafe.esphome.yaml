@@ -17,12 +17,9 @@ esp32:
 logger:
 
 wifi:
-  ssid: !secret sneksafe_wifi_ssid
-  password: !secret sneksafe_wifi_password
-
   ap:
     ssid: ${name}
-    password: !secret sneksafe_ap_password
+    password: snekysnek
 
 captive_portal:
 
