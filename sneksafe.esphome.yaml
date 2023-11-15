@@ -1,0 +1,127 @@
+substitutions:
+  light_pin: "19"
+  heater_pin: "18"
+  sda_pin: "21"
+  scl_pin: "22"
+
+  name: sneksafe
+  friendly_name: SnekSafe
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: az-delivery-devkit-v4
+
+logger:
+
+wifi:
+  ssid: !secret sneksafe_wifi_ssid
+  password: !secret sneksafe_wifi_password
+
+  ap:
+    ssid: ${name}
+    password: !secret sneksafe_ap_password
+
+captive_portal:
+
+ota:
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+    ssid:
+      name: ESP Connected SSID
+    bssid:
+      name: ESP Connected BSSID
+    mac_address:
+      name: ESP Mac Wifi Address
+    dns_address:
+      name: ESP DNS Address
+    
+time:
+  - platform: sntp
+    timezone: America/New_York
+    on_time:
+      # 10pm
+      - cron: '00 00 22 * * *'
+        then:
+          - switch.turn_off: light
+      # 10am
+      - cron: '00 00 10 * * *'
+        then:
+          - switch.turn_on: light
+
+i2c:
+  sda: ${sda_pin}
+  scl: ${scl_pin}
+
+sensor:
+  - platform: sht3xd
+    temperature:
+      name: "Temperature"
+      id: temperature
+    humidity:
+      name: "Humidity"
+    address: 0x44
+    update_interval: 100ms
+    heater_enabled: true
+    
+  - platform: uptime
+    name: Uptime Sensor
+    update_interval: 1s
+
+  - platform: wifi_signal
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 3s
+    entity_category: "diagnostic"
+
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+
+switch:
+  - platform: gpio
+    name: "Light"
+    id: light
+    pin: ${light_pin}
+
+output:
+  - platform: sigma_delta_output
+    update_interval: 500ms
+    id: heater
+    pin: ${heater_pin}
+
+climate:
+  - platform: pid
+    name: "PID Controller"
+    id: pid_controller
+    sensor: temperature
+    heat_output: heater
+    default_target_temperature: 81°F
+    control_parameters:
+      kp: 0.0
+      ki: 0.0
+      kd: 0.0
+      output_averaging_samples: 5
+      derivative_averaging_samples: 5
+    deadband_parameters:
+      threshold_high: 0.5°F
+      threshold_low: -0.5°F
+
+button:
+  - platform: template
+    name: "PID Autotune"
+    on_press:
+      - climate.pid.autotune: pid_controller
+
+web_server:
+  port: 80
+  local: true
