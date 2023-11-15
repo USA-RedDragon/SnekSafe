@@ -26,6 +26,7 @@ jobs:
       id: versions
 
     - uses: esphome/build-action@v1.8.0
+      id: build
       with:
         yaml_file: firmware/sneksafe.esphome.yaml
         version: ${{ env.ESPHOME_VERSION }}
@@ -47,7 +48,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.create_release.outputs.name }}.bin
+        asset_path: ${{ steps.build.outputs.name }}.bin
         asset_name: SnekSafe-esp32-${{ steps.versions.outputs.FIRMWARE_VERSION }}-firmware.bin
         asset_content_type: application/octet-stream
 
