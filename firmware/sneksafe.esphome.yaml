@@ -10,11 +10,34 @@ substitutions:
 esphome:
   name: ${name}
   friendly_name: ${friendly_name}
+  on_boot:
+    priority: 0
+    then:
+      - climate.control:
+          id: pid_controller
+          mode: HEAT
+          target_temperature: !lambda "return id(temperature_setpoint);"
+      - number.set:
+          id: temperature_setpoint_value
+          value: !lambda "return (id(temperature_setpoint)*1.8)+32;"
+      - select.set:
+          id: light_on_minute
+          option:  !lambda "return esphome::str_sprintf(\"%02d\", id(light_on_mm));"
+      - select.set:
+          id: light_on_hour
+          option:  !lambda "return esphome::str_sprintf(\"%02d\", id(light_on_hh));"
+      - select.set:
+          id: light_off_minute
+          option:  !lambda "return esphome::str_sprintf(\"%02d\", id(light_off_mm));"
+      - select.set:
+          id: light_off_hour
+          option:  !lambda "return esphome::str_sprintf(\"%02d\", id(light_off_hh));"
+      - globals.set:
+          id: initialized
+          value: "true"
 
 esp32:
   board: az-delivery-devkit-v4
-
-logger:
 
 wifi:
   ap:
@@ -28,38 +51,67 @@ ota:
 text_sensor:
   - platform: wifi_info
     ip_address:
-      name: ESP IP Address
+      name: IP Address
     ssid:
-      name: ESP Connected SSID
-    bssid:
-      name: ESP Connected BSSID
+      name: Network
     mac_address:
-      name: ESP Mac Wifi Address
-    dns_address:
-      name: ESP DNS Address
-    
+      name: MAC Address
+
+script:
+  # Called every minute to check if the light should change state
+  - id: check_light
+    mode: restart
+    then:
+      lambda: |-
+        #include <ctime>
+        if (!id(initialized)) {
+           return;
+        }
+
+        // Check if the we know what time it is.
+        auto now = id(time_sntp).now();
+        if (!now.is_valid()) { return; }
+
+        // Get the current timestamp.
+        if ((int)id(light_on_hh) == now.hour && (int)id(light_on_mm) == now.minute) {
+          id(light_switch).turn_on();
+          return;
+        }
+
+        // We're within the minute to turn off
+        if ((int)id(light_off_hh) == now.hour && (int)id(light_off_mm) == now.minute) {
+          id(light_switch).turn_off();
+          return;
+        }
+
 time:
   - platform: sntp
-    timezone: America/New_York
+    id: time_sntp
+    timezone: CST6CDT,M3.2.0,M11.1.0
+    update_interval: 600s
     on_time:
-      # 10pm
-      - cron: '00 00 22 * * *'
-        then:
-          - switch.turn_off: light
-      # 10am
-      - cron: '00 00 10 * * *'
-        then:
-          - switch.turn_on: light
+      seconds: 0
+      minutes: "*"
+      then:
+        script.execute: check_light
 
 i2c:
   sda: ${sda_pin}
   scl: ${scl_pin}
 
 sensor:
+  - platform: template
+    name: "Temperature"
+    id: temperature
+    unit_of_measurement: °F
   - platform: sht3xd
     temperature:
-      name: "Temperature"
-      id: temperature
+      id: raw_temperature
+      on_value:
+        then:
+          - sensor.template.publish:
+              id: temperature
+              state: !lambda 'return (x*1.8)+32;'
     humidity:
       name: "Humidity"
     address: 0x44
@@ -68,6 +120,14 @@ sensor:
     
   - platform: uptime
     name: Uptime Sensor
+    update_interval: 1s
+  - name: Timestamp
+    platform: template
+    lambda: 'return id(time_sntp).now().timestamp;'
+    internal: false
+    device_class: timestamp
+    entity_category: diagnostic
+    accuracy_decimals: 0
     update_interval: 1s
 
   - platform: wifi_signal
@@ -81,43 +141,216 @@ sensor:
     name: "WiFi Signal Percent"
     filters:
       - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
-    unit_of_measurement: "Signal %"
+    unit_of_measurement: "%"
     entity_category: "diagnostic"
+
+  - platform: pid
+    name: "PID KP"
+    type: KP
+  - platform: pid
+    name: "PID KI"
+    type: KI
+  - platform: pid
+    name: "PID KD"
+    type: KD
+  - platform: pid
+    name: "PID P"
+    type: PROPORTIONAL
+  - platform: pid
+    name: "PID I"
+    type: INTEGRAL
+  - platform: pid
+    name: "PID D"
+    type: DERIVATIVE
+  - platform: pid
+    name: "Heat Output"
+    type: HEAT
+  - platform: pid
+    name: "PID Error"
+    type: ERROR
+
+globals:
+  - id: temperature_setpoint
+    type: float
+    restore_value: yes
+    initial_value: "27.22"
+  - id: initialized
+    type: bool
+    restore_value: false
+    initial_value: "false"
+  # The time at which the light should turn on
+  - id: light_on_hh
+    type: int
+    restore_value: yes
+    initial_value: "9"
+  - id: light_on_mm
+    type: int
+    restore_value: yes
+    initial_value: "30"
+  # The time at which the light should turn off
+  - id: light_off_hh
+    type: int
+    restore_value: yes
+    initial_value: "21"
+  - id: light_off_mm
+    type: int
+    restore_value: yes
+    initial_value: "30"
+
+select:
+  - platform: template
+    name: Light On Minute
+    id: light_on_minute
+    optimistic: true
+    initial_option: "30"
+    set_action:
+      - globals.set:
+            id: light_on_mm
+            value: !lambda "return atoi(x.c_str());"
+    options:
+      - "00"
+      - "15"
+      - "30"
+      - "45"
+  - platform: template
+    name: Light Off Minute
+    id: light_off_minute
+    optimistic: true
+    initial_option: "30"
+    set_action:
+      - globals.set:
+            id: light_off_mm
+            value: !lambda "return atoi(x.c_str());"
+    options:
+      - "00"
+      - "15"
+      - "30"
+      - "45"
+  - platform: template
+    name: Light Off Hour
+    id: light_off_hour
+    initial_option: "21"
+    optimistic: true
+    set_action:
+      - globals.set:
+            id: light_off_hh
+            value: !lambda "return atoi(x.c_str());"
+    options:
+      - "00"
+      - "01"
+      - "02"
+      - "03"
+      - "04"
+      - "05"
+      - "06"
+      - "07"
+      - "08"
+      - "09"
+      - "10"
+      - "11"
+      - "12"
+      - "13"
+      - "14"
+      - "15"
+      - "16"
+      - "17"
+      - "18"
+      - "19"
+      - "20"
+      - "21"
+      - "22"
+      - "23"
+  - platform: template
+    name: Light On Hour
+    id: light_on_hour
+    optimistic: true
+    options:
+     - "00"
+     - "01"
+     - "02"
+     - "03"
+     - "04"
+     - "05"
+     - "06"
+     - "07"
+     - "08"
+     - "09"
+     - "10"
+     - "11"
+     - "12"
+     - "13"
+     - "14"
+     - "15"
+     - "16"
+     - "17"
+     - "18"
+     - "19"
+     - "20"
+     - "21"
+     - "22"
+     - "23"
+    initial_option: "09"
+    set_action:
+      - globals.set:
+            id: light_on_hh
+            value: !lambda "return atoi(x.c_str());"
+
+number:
+  - platform: template
+    id: temperature_setpoint_value
+    name: "Temperature Setpoint"
+    min_value: 70.0
+    max_value: 90.0
+    step: 0.5
+    update_interval: 500ms
+    lambda: return (id(pid_controller).target_temperature*1.8)+32;
+    unit_of_measurement: °F
+    set_action:
+      then:
+        - climate.control:
+            id: pid_controller
+            mode: HEAT
+            target_temperature: !lambda "return (x-32)/1.8;"
+        - globals.set:
+            id: temperature_setpoint
+            value: !lambda "return (x-32)/1.8;"
 
 switch:
   - platform: gpio
+    id: light_switch
     name: "Light"
-    id: light
     pin: ${light_pin}
+    restore_mode: RESTORE_DEFAULT_OFF
 
 output:
-  - platform: sigma_delta_output
-    update_interval: 500ms
+  - platform: slow_pwm
+    period: 500ms
     id: heater
     pin: ${heater_pin}
 
 climate:
   - platform: pid
-    name: "PID Controller"
     id: pid_controller
-    sensor: temperature
+    sensor: raw_temperature
     heat_output: heater
-    default_target_temperature: 81°F
+    default_target_temperature: 27.22
+    visual:
+      min_temperature: 25
+      max_temperature: 30
+      temperature_step: 0.05
     control_parameters:
-      kp: 0.0
+      kp: 8.0
       ki: 0.0
-      kd: 0.0
+      kd: 0.1
       output_averaging_samples: 5
       derivative_averaging_samples: 5
     deadband_parameters:
-      threshold_high: 0.5°F
-      threshold_low: -0.5°F
-
-button:
-  - platform: template
-    name: "PID Autotune"
-    on_press:
-      - climate.pid.autotune: pid_controller
+      threshold_high: 0.0555
+      threshold_low: 0.0555
+      kp_multiplier: 0.10
+      ki_multiplier: 0.05
+      kd_multiplier: 0.0
+      deadband_output_averaging_samples: 15
 
 web_server:
   port: 80
