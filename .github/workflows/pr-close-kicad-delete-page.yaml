@@ -11,7 +11,7 @@ on:
 
 jobs:
   kiri-delete:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - name: Kiri
       uses: usa-reddragon/kiri-github-action@v1
