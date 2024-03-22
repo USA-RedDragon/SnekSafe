@@ -15,7 +15,7 @@ on:
 jobs:
   kibot:
     runs-on: ubuntu-22.04
-    container: ghcr.io/inti-cmnb/kicad7_auto:latest@sha256:1ad631e5ab1a04abb5cbab66a09d15107734f52fb11fed21d0c216878121a15a
+    container: ghcr.io/inti-cmnb/kicad7_auto:latest@sha256:35115ab476f5298de08e0f2dae3809f76b20f365c1e7959f23939f219ad01276
     steps:
     - uses: actions/checkout@v4
     - name: Cache 3D models data
