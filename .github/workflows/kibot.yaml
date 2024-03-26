@@ -25,7 +25,7 @@ jobs:
         path: ~/cache_3d
         key: cache_3d
     - name: KiBot
-      uses: INTI-CMNB/KiBot@v2_k7
+      uses: INTI-CMNB/KiBot@v2_k8
       with:
         config: kicad/config.kibot.yaml
         schema: kicad/sneksafe.kicad_sch
