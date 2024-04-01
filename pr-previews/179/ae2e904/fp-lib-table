@@ -1,0 +1,12 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ESP32-DEVKITC-32D")(type "KiCad")(uri "${KIPRJMOD}/parts/ESP32-DEVKITC-32D")(options "")(descr ""))
+  (lib (name "RAC10E-05SK_277")(type "KiCad")(uri "${KIPRJMOD}/parts/RAC10E-05SK_277")(options "")(descr ""))
+  (lib (name "CPC40055ST")(type "KiCad")(uri "${KIPRJMOD}/parts/CPC40055ST")(options "")(descr ""))
+  (lib (name "Phoenix 1713969")(type "KiCad")(uri "${KIPRJMOD}/parts/Phoenix 1713969")(options "")(descr ""))
+  (lib (name "Phoenix 1714968")(type "KiCad")(uri "${KIPRJMOD}/parts/Phoenix 1714968")(options "")(descr ""))
+  (lib (name "snek")(type "KiCad")(uri "${KIPRJMOD}/parts/snek")(options "")(descr ""))
+  (lib (name "QR")(type "KiCad")(uri "${KIPRJMOD}/parts/QR")(options "")(descr ""))
+  (lib (name "830003000")(type "KiCad")(uri "${KIPRJMOD}/parts/Wurth 830003000")(options "")(descr ""))
+  (lib (name "Keystone 1074")(type "KiCad")(uri "${KIPRJMOD}/parts/Keystone 1074")(options "")(descr ""))
+)

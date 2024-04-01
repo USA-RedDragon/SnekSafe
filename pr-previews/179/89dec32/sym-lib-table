@@ -1,0 +1,7 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "ESP32-DEVKITC-32D")(type "KiCad")(uri "${KIPRJMOD}/parts/ESP32-DEVKITC-32D/ESP32-DEVKITC-32D.kicad_sym")(options "")(descr ""))
+  (lib (name "RAC10E-05SK_277")(type "KiCad")(uri "${KIPRJMOD}/parts/RAC10E-05SK_277/RAC10E-05SK_277.kicad_sym")(options "")(descr ""))
+  (lib (name "CPC40055ST")(type "KiCad")(uri "${KIPRJMOD}/parts/CPC40055ST/CPC40055ST.kicad_sym")(options "")(descr ""))
+  (lib (name "PassiveEarth")(type "KiCad")(uri "${KIPRJMOD}/parts/PassiveEarth.kicad_sym")(options "")(descr ""))
+)

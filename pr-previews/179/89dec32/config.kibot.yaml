@@ -1,0 +1,304 @@
+kibot:
+  version: 1
+
+global:
+  allow_microvias: false
+  out_dir: Generated
+  pcb_finish: ENIG
+  restore_project: true
+  allow_blind_buried_vias: false
+
+preflight:
+  check_zone_fills: true
+  erc_warnings: true
+  run_drc: true
+  run_erc: true
+
+outputs:
+# TODOs
+# blender_export
+# populate
+# kicost
+
+# Disable after CI is working.
+- name: basic_info
+  comment: Information about the run
+  type: info
+  dir: .
+
+#### BOM
+- name: generic_bom_html
+  comment: Generic Bill of Materials in HTML format
+  type: bom
+  dir: bom
+  options:
+    format: HTML
+    html:
+      hide_stats_info: true
+      logo: false
+    count_smd_tht: true
+    group_fields:
+    - Value
+    group_connectors: false
+    merge_blank_fields: false
+    merge_both_blank: false
+    ref_separator: ', '
+    normalize_values: true
+- name: generic_bom_csv
+  comment: Generic Bill of Materials in CSV format
+  type: bom
+  dir: bom
+  options:
+    format: CSV
+    csv:
+      hide_stats_info: true
+    count_smd_tht: true
+    group_fields:
+    - Value
+    group_connectors: false
+    merge_blank_fields: false
+    merge_both_blank: false
+    normalize_values: true
+- name: basic_ibom
+  comment: Interactive HTML BoM
+  type: ibom
+  dir: bom
+
+#### EXPORTS
+
+# .brd file for openboardview
+- name: basic_boardview
+  comment: Board View export
+  type: boardview
+  dir: exports
+# GenCAD
+- name: basic_gencad
+  comment: PCB in GenCAD format
+  type: gencad
+  dir: exports
+# 3D CAD
+- name: basic_step
+  comment: 3D model in STEP format
+  type: step
+  dir: exports/3D
+- name: basic_vrml
+  comment: PCB in VRML format
+  type: vrml
+  dir: exports/3D/VRML
+
+#### DATASHEETS
+- name: basic_download_datasheets
+  comment: Download the datasheets
+  type: download_datasheets
+  dir: datasheets
+  options:
+    dnf: true
+    repeated: false
+    output: '${manufacturer_name}-${manufacturer_part_number}.pdf'
+
+#### MANUFACTURING
+- name: basic_gerb_drill
+  comment: Drill files in GERB_DRILL format
+  type: gerb_drill
+  dir: gerbers
+  options:
+    map: gerber
+- name: gerber_modern
+  comment: Gerbers in modern format, recommended by the standard
+  type: gerber
+  dir: gerbers
+  options:
+    tent_vias: false
+  layers:
+  - layer: F.Cu
+    suffix: F_Cu
+    description: Front copper
+  - layer: B.Cu
+    suffix: B_Cu
+    description: Bottom copper
+  - layer: F.Paste
+    suffix: F_Paste
+    description: Front solder paste
+  - layer: F.Silkscreen
+    suffix: F_Silkscreen
+    description: Front silkscreen (artwork)
+  - layer: B.Mask
+    suffix: B_Mask
+    description: Bottom soldermask (negative)
+  - layer: F.Mask
+    suffix: F_Mask
+    description: Front soldermask (negative)
+  - layer: Edge.Cuts
+    suffix: Edge_Cuts
+    description: Board shape
+  - layer: F.Courtyard
+    suffix: F_Courtyard
+    description: Front courtyard area
+  - layer: F.Fab
+    suffix: F_Fab
+    description: Front documentation
+# JLCPCB
+- name: _JLCPCB_gerbers
+  comment: Gerbers compatible with JLCPCB
+  type: gerber
+  dir: JLCPCB
+  options:
+    exclude_edge_layer: true
+    exclude_pads_from_silkscreen: true
+    plot_sheet_reference: false
+    plot_footprint_refs: true
+    plot_footprint_values: false
+    force_plot_invisible_refs_vals: false
+    tent_vias: false
+    use_protel_extensions: true
+    create_gerber_job_file: false
+    disable_aperture_macros: true
+    gerber_precision: 4.6
+    use_gerber_x2_attributes: false
+    use_gerber_net_attributes: false
+    line_width: 0.1
+    subtract_mask_from_silk: true
+    inner_extension_pattern: '.g%n'
+  layers:
+    - copper
+    - F.SilkS
+    - B.SilkS
+    - F.Mask
+    - B.Mask
+    - Edge.Cuts
+- name: _JLCPCB_drill
+  comment: Drill files compatible with JLCPCB
+  type: excellon
+  dir: JLCPCB
+  options:
+    pth_and_npth_single_file: false
+    pth_id: '-PTH'
+    npth_id: '-NPTH'
+    metric_units: true
+    map: gerber
+    route_mode_for_oval_holes: false
+    output: "%f%i.%x"
+- name: _JLCPCB_gerbers_stencil
+  comment: Gerbers for the stencils compatible with JLCPCB
+  type: gerber
+  dir: JLCPCB
+  extends: _JLCPCB_gerbers
+  layers:
+    - F.Paste
+    - B.Paste
+- name: _JLCPCB_compress
+  comment: ZIP file for JLCPCB
+  type: compress
+  dir: gerbers
+  options:
+    output: JLCPCB-gerbers-drills-and-stencil.zip
+    move_files: true
+    files:
+      - from_output: _JLCPCB_gerbers
+        dest: /
+      - from_output: _JLCPCB_gerbers_stencil
+        dest: /
+      - from_output: _JLCPCB_drill
+        dest: /
+
+#### NAVIGATION
+- name: report_full
+  comment: Full design report
+  type: report
+  options:
+    template: full_SVG
+
+#### PDFS
+- name: basic_pcb_print_pdf
+  comment: PCB
+  type: pcb_print
+  dir: pdfs
+  options:
+    format: PDF
+    color_theme: _builtin_default
+    pages:
+    - layers:
+      - layer: F.Cu
+      - layer: F.Mask
+      - layer: F.Paste
+      - layer: F.Silkscreen
+      - layer: Edge.Cuts
+      sheet: Front copper
+    - layers:
+      - layer: B.Cu
+      - layer: B.Mask
+      - layer: Edge.Cuts
+      mirror: true
+      sheet: Bottom copper
+    - layers:
+      - layer: F.Courtyard
+      - layer: Edge.Cuts
+      sheet: Front courtyard area
+    - layers:
+      - layer: F.Fab
+      - layer: Edge.Cuts
+      sheet: Front documentation
+# Schematic
+- name: basic_pdf_sch_print
+  comment: Schematic in PDF format
+  type: pdf_sch_print
+  dir: pdfs
+  options:
+    background_color: true
+    color_theme: _builtin_default
+
+#### Pictures
+# PCB
+- name: basic_pcbdraw_svg_jlcpcb_green_enig_top
+  comment: PCB 2D render in SVG format, using jlcpcb-green-enig style
+  type: pcbdraw
+  dir: pics
+  options:
+    style: jlcpcb-green-enig
+    format: svg
+- name: basic_pcbdraw_svg_jlcpcb_green_enig_bottom
+  comment: PCB 2D render in SVG format, using jlcpcb-green-enig style
+  type: pcbdraw
+  dir: pics
+  options:
+    style: jlcpcb-green-enig
+    format: svg
+    bottom: true
+# Schematic
+- name: basic_svg_sch_print
+  comment: Schematic in SVG format
+  type: svg_sch_print
+  dir: pics
+  options:
+    background_color: true
+    color_theme: _builtin_default
+# 3D PNGs
+- name: basic_render_3d_top
+  comment: 3D view from top
+  type: render_3d
+  dir: pics
+  options:
+    ray_tracing: true
+    auto_crop: true
+    wait_render: 5000
+- name: basic_render_3d_30deg
+  comment: 3D view from 30 degrees
+  type: render_3d
+  dir: pics
+  output_id: 30deg
+  options:
+    ray_tracing: true
+    auto_crop: true
+    rotate_x: 2
+    rotate_z: 2
+    wait_render: 5000
+- name: basic_render_3d_bottom
+  comment: 3D view from bottom
+  type: render_3d
+  dir: pics
+  options:
+    ray_tracing: true
+    orthographic: true
+    auto_crop: true
+    view: bottom
+    wait_render: 5000
