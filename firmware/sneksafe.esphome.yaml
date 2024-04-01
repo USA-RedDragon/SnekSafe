@@ -13,6 +13,8 @@ esphome:
   on_boot:
     priority: 0
     then:
+      # read the RTC time once when the system boots
+      - ds1307.read_time:
       - climate.control:
           id: pid_controller
           mode: HEAT
@@ -85,15 +87,21 @@ script:
         }
 
 time:
+  - platform: ds1307
+    update_interval: 600s # 5m
   - platform: sntp
     id: time_sntp
     timezone: CST6CDT,M3.2.0,M11.1.0
-    update_interval: 600s
+    update_interval: 43200s # 12h
     on_time:
       seconds: 0
       minutes: "*"
       then:
         script.execute: check_light
+    on_time_sync:
+      then:
+        # update the RTC
+        ds1307.write_time:
 
 i2c:
   sda: ${sda_pin}
