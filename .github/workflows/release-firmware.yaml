@@ -11,7 +11,7 @@ concurrency:
 
 env:
   # renovate: datasource=github-releases depName=esphome/esphome
-  ESPHOME_VERSION: 2024.4.1
+  ESPHOME_VERSION: 2024.4.2
 
 jobs:
   build-firmware:
