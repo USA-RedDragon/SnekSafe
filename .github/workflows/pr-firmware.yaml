@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
-    - uses: esphome/build-action@v2.0.1
+    - uses: esphome/build-action@v3.1.0
       with:
         yaml_file: firmware/sneksafe.esphome.yaml
         version: ${{ env.ESPHOME_VERSION }}
