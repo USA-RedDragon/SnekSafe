@@ -6,7 +6,7 @@ concurrency:
 
 env:
   # renovate: datasource=github-releases depName=esphome/esphome
-  ESPHOME_VERSION: 2024.6.3
+  ESPHOME_VERSION: 2024.6.4
 
 on:
   push:
