@@ -7,4 +7,6 @@
   (lib (name "Phoenix 1714968")(type "KiCad")(uri "${KIPRJMOD}/parts/Phoenix 1714968")(options "")(descr ""))
   (lib (name "snek")(type "KiCad")(uri "${KIPRJMOD}/parts/snek")(options "")(descr ""))
   (lib (name "QR")(type "KiCad")(uri "${KIPRJMOD}/parts/QR")(options "")(descr ""))
+  (lib (name "830003000")(type "KiCad")(uri "${KIPRJMOD}/parts/Wurth 830003000")(options "")(descr ""))
+  (lib (name "Keystone 1074")(type "KiCad")(uri "${KIPRJMOD}/parts/Keystone 1074")(options "")(descr ""))
 )
