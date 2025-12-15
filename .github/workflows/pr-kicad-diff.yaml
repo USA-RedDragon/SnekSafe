@@ -18,6 +18,6 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
     - name: Kiri
-      uses: usa-reddragon/kiri-github-action@v1
+      uses: usa-reddragon/kiri-github-action@d3553e4310db18a00a412d1982e64aa640f4fa56 # v1.0.30
       with:
         project-file: kicad/sneksafe.kicad_pro
