@@ -25,7 +25,7 @@ jobs:
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
       id: versions
 
-    - uses: esphome/build-action@v3.3.0
+    - uses: esphome/build-action@11097cf47cb40e911464da8965b2b6882eee0a48 # v5.0.0
       id: build
       with:
         yaml_file: firmware/sneksafe.esphome.yaml
