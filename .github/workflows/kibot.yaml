@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-22.04
     container: ghcr.io/inti-cmnb/kicad7_auto:latest@sha256:78f021eb5d1f2dd5a7274f749f215aa55697fbf6eb60a228b0d3d006e4d7c18c
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
     - name: Cache 3D models data
       id: models-cache
       uses: set-soft/cache@main
@@ -33,7 +33,7 @@ jobs:
         cache3D: YES
         dir: Generated
     - name: Upload results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       if: ${{ always() }}
       with:
         name: KiBot
