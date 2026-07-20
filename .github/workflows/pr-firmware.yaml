@@ -19,7 +19,7 @@ jobs:
   build-firmware:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
     - uses: esphome/build-action@v3.3.0
       with:
         yaml_file: firmware/sneksafe.esphome.yaml
