@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
     - name: Set Versions
       run: |
         echo "FIRMWARE_VERSION=$(cat firmware/.version)" >> $GITHUB_OUTPUT
       id: versions
 
-    - uses: esphome/build-action@v3.3.0
+    - uses: esphome/build-action@9dcc9e036539b3dfc83dc3489f958999ea035efb # v3.3.0
       id: build
       with:
         yaml_file: firmware/sneksafe.esphome.yaml
@@ -33,7 +33,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -43,7 +43,7 @@ jobs:
         prerelease: false
 
     - name: Upload Firmware
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
