@@ -14,4 +14,4 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Kiri
-      uses: usa-reddragon/kiri-github-action@v1
+      uses: usa-reddragon/kiri-github-action@d3553e4310db18a00a412d1982e64aa640f4fa56 # v1
